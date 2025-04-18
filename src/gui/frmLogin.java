@@ -1,4 +1,4 @@
-package login;
+package gui;
 
 public class frmLogin {
 
