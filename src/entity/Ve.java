@@ -13,14 +13,12 @@ public class Ve {
     private int maKhachHang;  
     private List<ChiTietVe> dsChiTietVe;  
     
-    // Constructor không tham số
     public Ve() {
         this.ngayBan = new Date();
         this.daThanhToan = false;
         this.dsChiTietVe = new ArrayList<>();
     }
     
-    // Constructor có tham số
     public Ve(int maVe, Date ngayBan, double tongTien, boolean daThanhToan, 
               int maNhanVien, int maKhachHang) {
         this.maVe = maVe;
@@ -32,7 +30,6 @@ public class Ve {
         this.dsChiTietVe = new ArrayList<>();
     }
     
-    // Getters và Setters
     public int getMaVe() {
         return maVe;
     }
