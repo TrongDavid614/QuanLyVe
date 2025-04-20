@@ -5,7 +5,6 @@ public class ChiTietVe {
     private Ve ve;
     private Ghe ghe;
     
-    // Constructors
     public ChiTietVe() {
     }
     
@@ -20,7 +19,6 @@ public class ChiTietVe {
         this.ghe = ghe;
     }
     
-    // Getters and Setters
     public int getMaChiTietVe() {
         return maChiTietVe;
     }
