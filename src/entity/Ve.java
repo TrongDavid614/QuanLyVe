@@ -228,7 +228,7 @@ public class Ve {
     public String toString() {
         return "Ve [maVe=" + maVe + 
                ", khachHang=" + (khachHang != null ? khachHang.getTenKhachHang() : "null") + 
-               ", phim=" + (phim != null ? phim.getTenPhim() : "null") + // Đang thiếu Phim.java
+               ", phim=" + (phim != null ? phim.getTenPhim() : "null") +
                ", phongChieu=" + (phongChieu != null ? phongChieu.getTenPhong() : "null") + 
                ", ngayDat=" + ngayDat + 
                ", gioChieu=" + gioChieu + 
