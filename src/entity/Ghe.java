@@ -1,24 +1,32 @@
 package entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Ghe {
     private int maGhe;
-    private String tenGhe;         
-    private int maPhongChieu;      
-    private boolean daChon;        
-    private String loaiGhe;        
-    private double giaGhe;         
+    private String tenGhe; 
+    private String loaiGhe; 
+    private PhongChieu phongChieu;
+    private List<ChiTietVe> chiTietVes;
     
     public Ghe() {
-        this.daChon = false;
+        this.chiTietVes = new ArrayList<>();
     }
     
-    public Ghe(int maGhe, String tenGhe, int maPhongChieu, boolean daChon, String loaiGhe, double giaGhe) {
+    public Ghe(String tenGhe, String loaiGhe, PhongChieu phongChieu) {
+        this.tenGhe = tenGhe;
+        this.loaiGhe = loaiGhe;
+        this.phongChieu = phongChieu;
+        this.chiTietVes = new ArrayList<>();
+    }
+    
+    public Ghe(int maGhe, String tenGhe, String loaiGhe, PhongChieu phongChieu) {
         this.maGhe = maGhe;
         this.tenGhe = tenGhe;
-        this.maPhongChieu = maPhongChieu;
-        this.daChon = daChon;
         this.loaiGhe = loaiGhe;
-        this.giaGhe = giaGhe;
+        this.phongChieu = phongChieu;
+        this.chiTietVes = new ArrayList<>();
     }
     
     public int getMaGhe() {
@@ -37,22 +45,6 @@ public class Ghe {
         this.tenGhe = tenGhe;
     }
     
-    public int getMaPhongChieu() {
-        return maPhongChieu;
-    }
-    
-    public void setMaPhongChieu(int maPhongChieu) {
-        this.maPhongChieu = maPhongChieu;
-    }
-    
-    public boolean isDaChon() {
-        return daChon;
-    }
-    
-    public void setDaChon(boolean daChon) {
-        this.daChon = daChon;
-    }
-    
     public String getLoaiGhe() {
         return loaiGhe;
     }
@@ -61,34 +53,35 @@ public class Ghe {
         this.loaiGhe = loaiGhe;
     }
     
-    public double getGiaGhe() {
-        return giaGhe;
+    public PhongChieu getPhongChieu() {
+        return phongChieu;
     }
     
-    public void setGiaGhe(double giaGhe) {
-        this.giaGhe = giaGhe;
+    public void setPhongChieu(PhongChieu phongChieu) {
+        this.phongChieu = phongChieu;
     }
     
-    public boolean chonGhe() {
-        if(!daChon) {
-            daChon = true;
-            return true;
+    public List<ChiTietVe> getChiTietVes() {
+        return chiTietVes;
+    }
+    
+    public void setChiTietVes(List<ChiTietVe> chiTietVes) {
+        this.chiTietVes = chiTietVes;
+    }
+    
+    public boolean daCoNguoiDat() {
+        return chiTietVes != null && !chiTietVes.isEmpty();
+    }
+    
+    public void themChiTietVe(ChiTietVe chiTietVe) {
+        if (this.chiTietVes == null) {
+            this.chiTietVes = new ArrayList<>();
         }
-        return false;
-    }
-    
-    public boolean huyChonGhe() {
-        if(daChon) {
-            daChon = false;
-            return true;
-        }
-        return false;
+        this.chiTietVes.add(chiTietVe);
     }
     
     @Override
     public String toString() {
-        return "Ghe [maGhe=" + maGhe + ", tenGhe=" + tenGhe + 
-               ", phongChieu=" + maPhongChieu + ", loaiGhe=" + loaiGhe + 
-               ", giaGhe=" + giaGhe + ", trangThai=" + (daChon ? "Đã chọn" : "Trống") + "]";
+        return "Ghe [maGhe=" + maGhe + ", tenGhe=" + tenGhe + ", loaiGhe=" + loaiGhe + "]";
     }
 }
