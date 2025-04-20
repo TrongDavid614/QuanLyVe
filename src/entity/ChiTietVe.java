@@ -2,25 +2,21 @@ package entity;
 
 public class ChiTietVe {
     private int maChiTietVe;
-    private int maVe;          
-    private int maPhim;     
-    private int maPhongChieu;  
-    private int maLichChieu;  
-    private String viTriGhe;  
-    private double giaVe;      
+    private Ve ve;
+    private Ghe ghe;
     
     public ChiTietVe() {
     }
     
-    public ChiTietVe(int maChiTietVe, int maVe, int maPhim, int maPhongChieu, 
-                    int maLichChieu, String viTriGhe, double giaVe) {
+    public ChiTietVe(Ve ve, Ghe ghe) {
+        this.ve = ve;
+        this.ghe = ghe;
+    }
+    
+    public ChiTietVe(int maChiTietVe, Ve ve, Ghe ghe) {
         this.maChiTietVe = maChiTietVe;
-        this.maVe = maVe;
-        this.maPhim = maPhim;
-        this.maPhongChieu = maPhongChieu;
-        this.maLichChieu = maLichChieu;
-        this.viTriGhe = viTriGhe;
-        this.giaVe = giaVe;
+        this.ve = ve;
+        this.ghe = ghe;
     }
     
     public int getMaChiTietVe() {
@@ -31,58 +27,26 @@ public class ChiTietVe {
         this.maChiTietVe = maChiTietVe;
     }
     
-    public int getMaVe() {
-        return maVe;
+    public Ve getVe() {
+        return ve;
     }
     
-    public void setMaVe(int maVe) {
-        this.maVe = maVe;
+    public void setVe(Ve ve) {
+        this.ve = ve;
     }
     
-    public int getMaPhim() {
-        return maPhim;
+    public Ghe getGhe() {
+        return ghe;
     }
     
-    public void setMaPhim(int maPhim) {
-        this.maPhim = maPhim;
-    }
-    
-    public int getMaPhongChieu() {
-        return maPhongChieu;
-    }
-    
-    public void setMaPhongChieu(int maPhongChieu) {
-        this.maPhongChieu = maPhongChieu;
-    }
-    
-    public int getMaLichChieu() {
-        return maLichChieu;
-    }
-    
-    public void setMaLichChieu(int maLichChieu) {
-        this.maLichChieu = maLichChieu;
-    }
-    
-    public String getViTriGhe() {
-        return viTriGhe;
-    }
-    
-    public void setViTriGhe(String viTriGhe) {
-        this.viTriGhe = viTriGhe;
-    }
-    
-    public double getGiaVe() {
-        return giaVe;
-    }
-    
-    public void setGiaVe(double giaVe) {
-        this.giaVe = giaVe;
+    public void setGhe(Ghe ghe) {
+        this.ghe = ghe;
     }
     
     @Override
     public String toString() {
-        return "ChiTietVe [maChiTietVe=" + maChiTietVe + ", phim=" + maPhim + 
-               ", phongChieu=" + maPhongChieu + ", ghe=" + viTriGhe + 
-               ", giaVe=" + giaVe + "]";
+        return "ChiTietVe [maChiTietVe=" + maChiTietVe + 
+               ", ve=" + (ve != null ? ve.getMaVe() : "null") + 
+               ", ghe=" + (ghe != null ? ghe.getTenGhe() : "null") + "]";
     }
 }
