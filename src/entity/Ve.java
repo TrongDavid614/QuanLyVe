@@ -1,33 +1,50 @@
 package entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Ve {
-    private int maVe;          
-    private Date ngayBan;     
-    private double tongTien;  
-    private boolean daThanhToan;
-    private int maNhanVien;    
-    private int maKhachHang;  
-    private List<ChiTietVe> dsChiTietVe;  
+    private int maVe;
+    private KhachHang khachHang;
+    private Phim phim;
+    private PhongChieu phongChieu;
+    private Date ngayDat;
+    private Date gioChieu;
+    private double tongTien;
+    private List<ChiTietVe> chiTietVes;
+    private ThongKe thongKe;
+    private List<DoAn> doAns;
+    private KhuyenMai khuyenMai;
     
     public Ve() {
-        this.ngayBan = new Date();
-        this.daThanhToan = false;
-        this.dsChiTietVe = new ArrayList<>();
+        this.ngayDat = new Date();
+        this.chiTietVes = new ArrayList<>();
+        this.doAns = new ArrayList<>();
     }
     
-    public Ve(int maVe, Date ngayBan, double tongTien, boolean daThanhToan, 
-              int maNhanVien, int maKhachHang) {
+    public Ve(KhachHang khachHang, Phim phim, PhongChieu phongChieu, Date gioChieu) {
+        this.khachHang = khachHang;
+        this.phim = phim;
+        this.phongChieu = phongChieu;
+        this.gioChieu = gioChieu;
+        this.ngayDat = new Date();
+        this.chiTietVes = new ArrayList<>();
+        this.doAns = new ArrayList<>();
+    }
+    
+    public Ve(int maVe, KhachHang khachHang, Phim phim, PhongChieu phongChieu, 
+             Date ngayDat, Date gioChieu, double tongTien) {
         this.maVe = maVe;
-        this.ngayBan = ngayBan;
+        this.khachHang = khachHang;
+        this.phim = phim;
+        this.phongChieu = phongChieu;
+        this.ngayDat = ngayDat;
+        this.gioChieu = gioChieu;
         this.tongTien = tongTien;
-        this.daThanhToan = daThanhToan;
-        this.maNhanVien = maNhanVien;
-        this.maKhachHang = maKhachHang;
-        this.dsChiTietVe = new ArrayList<>();
+        this.chiTietVes = new ArrayList<>();
+        this.doAns = new ArrayList<>();
     }
     
     public int getMaVe() {
@@ -38,12 +55,44 @@ public class Ve {
         this.maVe = maVe;
     }
     
-    public Date getNgayBan() {
-        return ngayBan;
+    public KhachHang getKhachHang() {
+        return khachHang;
     }
     
-    public void setNgayBan(Date ngayBan) {
-        this.ngayBan = ngayBan;
+    public void setKhachHang(KhachHang khachHang) {
+        this.khachHang = khachHang;
+    }
+    
+    public Phim getPhim() {
+        return phim;
+    }
+    
+    public void setPhim(Phim phim) {
+        this.phim = phim;
+    }
+    
+    public PhongChieu getPhongChieu() {
+        return phongChieu;
+    }
+    
+    public void setPhongChieu(PhongChieu phongChieu) {
+        this.phongChieu = phongChieu;
+    }
+    
+    public Date getNgayDat() {
+        return ngayDat;
+    }
+    
+    public void setNgayDat(Date ngayDat) {
+        this.ngayDat = ngayDat;
+    }
+    
+    public Date getGioChieu() {
+        return gioChieu;
+    }
+    
+    public void setGioChieu(Date gioChieu) {
+        this.gioChieu = gioChieu;
     }
     
     public double getTongTien() {
@@ -54,67 +103,135 @@ public class Ve {
         this.tongTien = tongTien;
     }
     
-    public boolean isDaThanhToan() {
-        return daThanhToan;
+    public List<ChiTietVe> getChiTietVes() {
+        return chiTietVes;
     }
     
-    public void setDaThanhToan(boolean daThanhToan) {
-        this.daThanhToan = daThanhToan;
+    public void setChiTietVes(List<ChiTietVe> chiTietVes) {
+        this.chiTietVes = chiTietVes;
     }
     
-    public int getMaNhanVien() {
-        return maNhanVien;
+    public ThongKe getThongKe() {
+        return thongKe;
     }
     
-    public void setMaNhanVien(int maNhanVien) {
-        this.maNhanVien = maNhanVien;
+    public void setThongKe(ThongKe thongKe) {
+        this.thongKe = thongKe;
     }
     
-    public int getMaKhachHang() {
-        return maKhachHang;
+    public List<DoAn> getDoAns() {
+        return doAns;
     }
     
-    public void setMaKhachHang(int maKhachHang) {
-        this.maKhachHang = maKhachHang;
+    public void setDoAns(List<DoAn> doAns) {
+        this.doAns = doAns;
     }
     
-    public List<ChiTietVe> getDsChiTietVe() {
-        return dsChiTietVe;
+    public KhuyenMai getKhuyenMai() {
+        return khuyenMai;
     }
     
-    public void setDsChiTietVe(List<ChiTietVe> dsChiTietVe) {
-        this.dsChiTietVe = dsChiTietVe;
+    public void setKhuyenMai(KhuyenMai khuyenMai) {
+        this.khuyenMai = khuyenMai;
     }
     
-    public void themChiTietVe(ChiTietVe chiTietVe) {
-        dsChiTietVe.add(chiTietVe);
+    public void themGhe(Ghe ghe) {
+        if (ghe.daCoNguoiDat()) {
+            throw new IllegalStateException("Ghế này đã được đặt!");
+        }
+        
+        if (this.chiTietVes == null) {
+            this.chiTietVes = new ArrayList<>();
+        }
+        
+        ChiTietVe chiTietVe = new ChiTietVe(this, ghe);
+        this.chiTietVes.add(chiTietVe);
+        ghe.themChiTietVe(chiTietVe);
+        
         tinhTongTien();
     }
     
-    public boolean xoaChiTietVe(ChiTietVe chiTietVe) {
-        boolean ketQua = dsChiTietVe.remove(chiTietVe);
-        if(ketQua) {
+    public void xoaGhe(Ghe ghe) {
+        if (this.chiTietVes == null) {
+            return;
+        }
+        
+        ChiTietVe chiTietVeToRemove = null;
+        for (ChiTietVe ctv : chiTietVes) {
+            if (ctv.getGhe().getMaGhe() == ghe.getMaGhe()) {
+                chiTietVeToRemove = ctv;
+                break;
+            }
+        }
+        
+        if (chiTietVeToRemove != null) {
+            chiTietVes.remove(chiTietVeToRemove);
+            ghe.getChiTietVes().remove(chiTietVeToRemove);
+            
             tinhTongTien();
         }
-        return ketQua;
     }
     
-    public void tinhTongTien() {
-        double tong = 0;
-        for(ChiTietVe ctv : dsChiTietVe) {
-            tong += ctv.getGiaVe();
+    public void themDoAn(DoAn doAn) {
+        if (this.doAns == null) {
+            this.doAns = new ArrayList<>();
         }
-        this.tongTien = tong;
+        this.doAns.add(doAn);
+        tinhTongTien();
     }
     
-    public void thanhToan() {
-        this.daThanhToan = true;
+
+    public void xoaDoAn(DoAn doAn) {
+        if (this.doAns != null) {
+            this.doAns.remove(doAn);
+            tinhTongTien();
+        }
+    }
+ 
+    public void tinhTongTien() {
+        double tienGhe = 0;
+        if (chiTietVes != null) {
+            for (ChiTietVe ctv : chiTietVes) {
+               
+                if ("VIP".equals(ctv.getGhe().getLoaiGhe())) {
+                    tienGhe += 120000; 
+                } else {
+                    tienGhe += 80000; 
+                }
+            }
+        }
+        
+        double tienDoAn = 0;
+        if (doAns != null) {
+            for (DoAn doAn : doAns) {
+                tienDoAn += doAn.getGiaDoAn();
+            }
+        }
+        
+        double tongTienTruocGiam = tienGhe + tienDoAn;
+        
+        if (khuyenMai != null) {
+            LocalDate ngayHienTai = LocalDate.now();
+
+            if (ngayHienTai.isAfter(khuyenMai.getNgayGioDat()) && 
+                ngayHienTai.isBefore(khuyenMai.getNgayKetThuc())) {
+                double phanTramGiam = khuyenMai.getPhanTramGiam();
+                this.tongTien = tongTienTruocGiam * (1 - phanTramGiam / 100.0);
+                return;
+            }
+        }
+        
+        this.tongTien = tongTienTruocGiam;
     }
     
     @Override
     public String toString() {
-        return "Ve [maVe=" + maVe + ", ngayBan=" + ngayBan + 
-               ", tongTien=" + tongTien + ", daThanhToan=" + daThanhToan + 
-               ", soLuongVe=" + dsChiTietVe.size() + "]";
+        return "Ve [maVe=" + maVe + 
+               ", khachHang=" + (khachHang != null ? khachHang.getTenKhachHang() : "null") + 
+               ", phim=" + (phim != null ? phim.getTenPhim() : "null") + // Đang thiếu Phim.java
+               ", phongChieu=" + (phongChieu != null ? phongChieu.getTenPhong() : "null") + 
+               ", ngayDat=" + ngayDat + 
+               ", gioChieu=" + gioChieu + 
+               ", tongTien=" + tongTien + "]";
     }
 }
