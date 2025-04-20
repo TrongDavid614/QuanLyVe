@@ -1,26 +1,5 @@
 package entity;
 
-public class PhongChieu {
-    private int maPhongChieu;
-    private String tenPhong;
-    private int sucChua;      
-    private String loaiPhong; 
-    private boolean trangThai; 
-    
-    public PhongChieu() {
-        this.trangThai = true; 
-    }
-    
-    public PhongChieu(int maPhongChieu, String tenPhong, int sucChua, String loaiPhong, boolean trangThai) {
-        this.maPhongChieu = maPhongChieu;
-        this.tenPhong = tenPhong;
-        this.sucChua = sucChua;
-        this.loaiPhong = loaiPhong;
-        this.trangThai = trangThai;
-    }
-    
-package entity;
-
 import java.util.ArrayList;
 import java.util.List;
 
