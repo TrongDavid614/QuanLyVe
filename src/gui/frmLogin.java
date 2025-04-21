@@ -1,10 +1,16 @@
 package gui;
 
+import connectSQL.ConnectSQL;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class frmLogin extends JFrame implements MouseListener{
+public class frmLogin extends JFrame implements ActionListener,MouseListener{
     private final JLabel lblTitle;
     private final JLabel lblTaiKhoan;
     private final JLabel lblMatKhau;
@@ -17,6 +23,8 @@ public class frmLogin extends JFrame implements MouseListener{
     private boolean isPasswordVisible = false;
 
     public frmLogin() {
+        ConnectSQL.getInstance().connect();
+
         setTitle("Đăng nhập");
         setSize(900, 600);
         setLocationRelativeTo(null);
@@ -109,8 +117,64 @@ public class frmLogin extends JFrame implements MouseListener{
         tacVu.setBounds(30, 450, 400, 80);
         pRight.add(tacVu);
 
+        btnDangNhap.addActionListener(this);
+        btnThoat.addActionListener(this);
         setVisible(true);
     }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == btnDangNhap) {
+                dangNhap();
+            } else if (e.getSource() == btnThoat) {
+                exit();
+            }
+    }
+
+    public void exit() {
+        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }
+
+    public void dangNhap(){
+        String tk = txtTaiKhoan.getText();
+        String mk = String.valueOf(txtPass.getPassword());
+        if (tk.isEmpty() || mk.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tài khoản và mật khẩu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (kiemTraDangNhap(tk, mk)) {
+            JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            new frmTrangChu();
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không đúng!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+    public boolean kiemTraDangNhap(String user, String pass) {
+        try {
+
+            Connection con = ConnectSQL.getConnection();
+            if (con == null) {
+                System.out.println("Kết nối cơ sở dữ liệu thất bại!");
+                return false;
+            }
+
+            String sql = "SELECT * FROM TaiKhoanNhanVien WHERE tenDangNhap = ? AND matKhau = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, user);
+            ps.setString(2, pass);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     class ImagePanel extends JPanel {
         private final Image img;
