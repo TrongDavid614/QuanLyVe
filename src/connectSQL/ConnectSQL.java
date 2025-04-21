@@ -10,16 +10,19 @@ public class ConnectSQL {
         public static ConnectSQL getInstance(){
             return instance;
         }
-        public void connect(){
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=QLV;encrypt=true;trustServerCertificate=true;";
-            String user = "sa";
-            String password = "sapassword";
-            try{
-                con = DriverManager.getConnection(url , user , password);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+    public void connect(){
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=QLV;encrypt=true;trustServerCertificate=true;";
+        String user = "sa";
+        String password = "sapassword";
+        try {
+            con = DriverManager.getConnection(url, user, password);
+            System.out.println("Kết nối thành công!");
+        } catch (SQLException e) {
+            System.out.println("Kết nối cơ sở dữ liệu thất bại!");
+            e.printStackTrace();
         }
+    }
+
     public  void disconnect(){
         if(con != null){
             try{
