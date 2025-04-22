@@ -52,16 +52,12 @@ public class frmTrangChu extends JFrame implements ActionListener {
         for (String item : heThongItems) {
             JMenuItem menuItem = createMenuItem(item);
             menuItem.setFont(new Font("Arial", Font.PLAIN, 18));
-            // Đăng ký ActionListener cho Đăng xuất và Thoát
             if (item.equals("Đăng xuất")) {
-                miDangXuat = menuItem; // Lưu tham chiếu
+                miDangXuat = menuItem;
                 menuItem.addActionListener(this);
             } else if (item.equals("Thoát")) {
-                miThoat = menuItem; // Lưu tham chiếu
+                miThoat = menuItem;
                 menuItem.addActionListener(this);
-            } else {
-                // Các mục khác có thể thêm ActionListener nếu cần
-                menuItem.addActionListener(this); // Tùy chọn: xử lý các mục khác
             }
             menuHeThong.add(menuItem);
         }
@@ -70,21 +66,21 @@ public class frmTrangChu extends JFrame implements ActionListener {
         for (String item : danhMucItems) {
             JMenuItem menuItem = createMenuItem(item);
             menuItem.setFont(new Font("Arial", Font.PLAIN, 18));
-            menuItem.addActionListener(this); // Tùy chọn: xử lý các mục danh mục
+            menuItem.addActionListener(this);
             menuDanhMuc.add(menuItem);
         }
 
-        String[] xuLyItems = {"Vé", "Phòng chiếu"};
+        String[] xuLyItems = {"Vé", "Phòng chiếu", "Đồ ăn", "Đặt vé"};
         for (String item : xuLyItems) {
             JMenuItem menuItem = createMenuItem(item);
             menuItem.setFont(new Font("Arial", Font.PLAIN, 18));
-            menuItem.addActionListener(this); // Tùy chọn: xử lý các mục xử lý
+            menuItem.addActionListener(this);
             menuXuLy.add(menuItem);
         }
 
         JMenuItem doanThuItem = createMenuItem("Doanh thu");
         doanThuItem.setFont(new Font("Arial", Font.PLAIN, 18));
-        doanThuItem.addActionListener(this); // Tùy chọn: xử lý mục thống kê
+        doanThuItem.addActionListener(this);
         menuThongKe.add(doanThuItem);
 
         menuBar.add(menuHeThong);
