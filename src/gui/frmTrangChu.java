@@ -6,8 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class frmTrangChu extends JFrame implements ActionListener {
-
     private JLabel lblQuanLy;
+    private JMenuItem miDangXuat;
+    private JMenuItem miThoat;
 
     public frmTrangChu() {
         setTitle("Trang Chủ");
@@ -34,7 +35,6 @@ public class frmTrangChu extends JFrame implements ActionListener {
         JMenu menuXuLy = new JMenu("XỬ LÝ");
         JMenu menuThongKe = new JMenu("THỐNG KÊ");
 
-
         menuHeThong.setBounds(100, 0, 200, 50);
 
         Font fontMenu = new Font("Arial", Font.BOLD, 20);
@@ -48,27 +48,20 @@ public class frmTrangChu extends JFrame implements ActionListener {
         menuXuLy.setIcon(imgXuLy);
         menuThongKe.setIcon(imgThongKe);
 
-
-        String[] heThongItems = {"Trang chủ","Tài khoản", "Đăng xuất" , "Thoát"};
+        String[] heThongItems = {"Trang chủ", "Tài khoản", "Đăng xuất", "Thoát"};
         for (String item : heThongItems) {
             JMenuItem menuItem = createMenuItem(item);
             menuItem.setFont(new Font("Arial", Font.PLAIN, 18));
-
+            // Đăng ký ActionListener cho Đăng xuất và Thoát
             if (item.equals("Đăng xuất")) {
-                menuItem.addActionListener(e -> {
-                    int option = JOptionPane.showConfirmDialog(this,
-                            "Bạn có chắc muốn đăng xuất?",
-                            "Xác nhận đăng xuất",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE);
-                    if (option == JOptionPane.YES_OPTION) {
-                        dispose();
-                        new frmLogin();
-                        JOptionPane.showMessageDialog(this, "Đăng xuất thành công!");
-                    }
-                });
+                miDangXuat = menuItem; // Lưu tham chiếu
+                menuItem.addActionListener(this);
             } else if (item.equals("Thoát")) {
-                menuItem.addActionListener(e -> System.exit(0));
+                miThoat = menuItem; // Lưu tham chiếu
+                menuItem.addActionListener(this);
+            } else {
+                // Các mục khác có thể thêm ActionListener nếu cần
+                menuItem.addActionListener(this); // Tùy chọn: xử lý các mục khác
             }
             menuHeThong.add(menuItem);
         }
@@ -77,6 +70,7 @@ public class frmTrangChu extends JFrame implements ActionListener {
         for (String item : danhMucItems) {
             JMenuItem menuItem = createMenuItem(item);
             menuItem.setFont(new Font("Arial", Font.PLAIN, 18));
+            menuItem.addActionListener(this); // Tùy chọn: xử lý các mục danh mục
             menuDanhMuc.add(menuItem);
         }
 
@@ -84,11 +78,13 @@ public class frmTrangChu extends JFrame implements ActionListener {
         for (String item : xuLyItems) {
             JMenuItem menuItem = createMenuItem(item);
             menuItem.setFont(new Font("Arial", Font.PLAIN, 18));
+            menuItem.addActionListener(this); // Tùy chọn: xử lý các mục xử lý
             menuXuLy.add(menuItem);
         }
 
         JMenuItem doanThuItem = createMenuItem("Doanh thu");
         doanThuItem.setFont(new Font("Arial", Font.PLAIN, 18));
+        doanThuItem.addActionListener(this); // Tùy chọn: xử lý mục thống kê
         menuThongKe.add(doanThuItem);
 
         menuBar.add(menuHeThong);
@@ -96,7 +92,7 @@ public class frmTrangChu extends JFrame implements ActionListener {
         menuBar.add(menuXuLy);
         menuBar.add(menuThongKe);
 
-        lblQuanLy = new JLabel("QUẢN LÝ: NAME");
+        lblQuanLy = new JLabel("QUẢN LÝ: VĂN TRỌNG");
         lblQuanLy.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.add(lblQuanLy, BorderLayout.EAST);
@@ -133,9 +129,39 @@ public class frmTrangChu extends JFrame implements ActionListener {
         item.addActionListener(action);
         return item;
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if (source == miDangXuat) {
+            int option = JOptionPane.showConfirmDialog(this,
+                    "Bạn có chắc muốn đăng xuất?",
+                    "Xác nhận đăng xuất",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (option == JOptionPane.YES_OPTION) {
+                dispose();
+                try {
+                    new frmLogin();
+                    JOptionPane.showMessageDialog(null, "Đăng xuất thành công!");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Lỗi: Không thể mở frmLogin!");
+                }
+            }
+        } else if (source == miThoat) {
+            int option = JOptionPane.showConfirmDialog(this,
+                    "Bạn có chắc muốn thoát?",
+                    "Xác nhận thoát",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (option == JOptionPane.YES_OPTION) {
+                dispose();
+            }
+        } else {
 
+            String command = e.getActionCommand();
+            JOptionPane.showMessageDialog(this, command + " được chọn!");
+        }
     }
 
     public static void main(String[] args) {
