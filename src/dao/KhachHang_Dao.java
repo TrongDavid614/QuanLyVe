@@ -1,4 +1,69 @@
 package dao;
 
+import connectSQL.ConnectSQL;
+import entity.KhachHang;
+
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
 public class KhachHang_Dao {
+    public ArrayList<KhachHang> dskh;
+    public KhachHang_Dao() {
+        dskh = new ArrayList<>();
+    }
+    public ArrayList<KhachHang> getalltbkhachhang() {
+        try{
+            Connection con = ConnectSQL.getConnection();
+            String sql = "SELECT * FROM khachhang";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                String makh = rs.getString("maKH");
+                String tenkh = rs.getString("tenKH");
+                String diachi = rs.getString("diaChi");
+                LocalDate ngaysinh = rs.getDate("ngaySinh").toLocalDate();
+                String gioitinh = rs.getString("gioiTinh");
+                String sdt = rs.getString("soDienThoai");
+                KhachHang kh = new KhachHang(makh,tenkh,ngaysinh, diachi,gioitinh, sdt);
+                dskh.add(kh);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return dskh;
+    }
+    public boolean isExits(String makh) {
+        try{
+            Connection con = ConnectSQL.getInstance().getConnection();
+            String sql = "select count(*) from KhachHang where maKH = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, makh);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+    public boolean createKH(KhachHang kh){
+        Connection con = ConnectSQL.getInstance().getConnection();
+        int n=0;
+        try {
+            String sql = "INSERT INTO KhachHang (maKH, tenKH, ngaySinh, diaChi,gioiTinh, soDienThoai) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, kh.getMaKhachHang());
+            stmt.setString(2, kh.getTenKhachHang());
+            stmt.setDate(3, Date.valueOf(kh.getNgaySinh()));
+            stmt.setString(4, kh.getDiaChi());
+            stmt.setString(5, kh.getGioiTinh());
+            stmt.setString(6, kh.getSoDienThoai());
+            n = stmt.executeUpdate();
+            return n > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

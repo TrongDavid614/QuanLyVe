@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class frmTrangChu extends JFrame implements ActionListener {
+    private JMenuItem miKhachHang;
     private JLabel lblQuanLy;
     private JMenuItem miDangXuat;
     private JMenuItem miThoat;
@@ -65,6 +66,10 @@ public class frmTrangChu extends JFrame implements ActionListener {
         String[] danhMucItems = {"Khách hàng", "Nhân viên", "Khuyến mại", "Phim"};
         for (String item : danhMucItems) {
             JMenuItem menuItem = createMenuItem(item);
+            if(item.equals("Khách hàng")){
+                miKhachHang = menuItem;
+                menuItem.addActionListener(this);
+            }
             menuItem.setFont(new Font("Arial", Font.PLAIN, 18));
             menuItem.addActionListener(this);
             menuDanhMuc.add(menuItem);
@@ -128,8 +133,8 @@ public class frmTrangChu extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource();
-        if (source == miDangXuat) {
+        Object o = e.getSource();
+        if (o == miDangXuat) {
             int option = JOptionPane.showConfirmDialog(this,
                     "Bạn có chắc muốn đăng xuất?",
                     "Xác nhận đăng xuất",
@@ -144,7 +149,7 @@ public class frmTrangChu extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(this, "Lỗi: Không thể mở frmLogin!");
                 }
             }
-        } else if (source == miThoat) {
+        } else if (o == miThoat) {
             int option = JOptionPane.showConfirmDialog(this,
                     "Bạn có chắc muốn thoát?",
                     "Xác nhận thoát",
@@ -153,10 +158,9 @@ public class frmTrangChu extends JFrame implements ActionListener {
             if (option == JOptionPane.YES_OPTION) {
                 dispose();
             }
-        } else {
-
-            String command = e.getActionCommand();
-            JOptionPane.showMessageDialog(this, command + " được chọn!");
+        } else if(o == miKhachHang){
+            dispose();
+            new frmKhachHang();
         }
     }
 

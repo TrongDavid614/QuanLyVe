@@ -1,28 +1,25 @@
 package entity;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class KhachHang {
     private String maKhachHang;
     private String tenKhachHang;
     private LocalDate ngaySinh;
     private String diaChi;
+    private String gioiTinh;
     private String soDienThoai;
-    private String email;
-    private String tenDangNhap;
-    private String matKhau;
 
-    public KhachHang(String maKhachHang, String tenKhachHang, LocalDate ngaySinh, String diaChi, String soDienThoai, String email, String tenDangNhap, String matKhau) {
+
+    public KhachHang(String maKhachHang, String tenKhachHang, LocalDate ngaySinh, String diaChi, String gioiTinh, String soDienThoai) {
         this.maKhachHang = maKhachHang;
         this.tenKhachHang = tenKhachHang;
-        this.ngaySinh = LocalDate.parse(ngaySinh.toString());
+        this.ngaySinh = ngaySinh;
         this.diaChi = diaChi;
+        this.gioiTinh = gioiTinh;
         this.soDienThoai = soDienThoai;
-        this.email = email;
-        this.tenDangNhap = tenDangNhap;
-        this.matKhau = matKhau;
     }
+
     public KhachHang(String maKhachHang){
         this.maKhachHang = maKhachHang;
     }
@@ -67,28 +64,11 @@ public class KhachHang {
         this.soDienThoai = soDienThoai;
     }
 
-    public String getEmail() {
-        return email;
+    public String getGioiTinh() {
+        return gioiTinh;
     }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTenDangNhap() {
-        return tenDangNhap;
-    }
-
-    public void setTenDangNhap(String tenDangNhap) {
-        this.tenDangNhap = tenDangNhap;
-    }
-
-    public String getMatKhau() {
-        return matKhau;
-    }
-
-    public void setMatKhau(String matKhau) {
-        this.matKhau = matKhau;
+    public void setGioiTinh(String gioiTinh) {
+        this.gioiTinh = gioiTinh;
     }
 
     @Override
@@ -98,10 +78,8 @@ public class KhachHang {
                 ", tenKhachHang='" + tenKhachHang + '\'' +
                 ", ngaySinh=" + ngaySinh +
                 ", diaChi='" + diaChi + '\'' +
+                ", gioiTinh=" + gioiTinh +
                 ", soDienThoai='" + soDienThoai + '\'' +
-                ", email='" + email + '\'' +
-                ", tenDangNhap='" + tenDangNhap + '\'' +
-                ", matKhau='" + matKhau + '\'' +
                 '}';
     }
 }
