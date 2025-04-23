@@ -469,7 +469,8 @@ public class frmKhachHang extends JFrame implements ActionListener, MouseListene
             JOptionPane.showMessageDialog(this, "Số điện thoại phải là 10 chữ số!");
             return;
         }
-        KhachHang kh = new KhachHang(maKH, tenKH, LocalDate.parse(ngaySinh, DateTimeFormatter.ofPattern("dd/MM/yyyy")), diaChi, gioiTinh, soDT);
+        KhachHang kh = new KhachHang(maKH, tenKH, LocalDate.parse(ngaySinh,
+                DateTimeFormatter.ofPattern("dd/MM/yyyy")), diaChi, gioiTinh, soDT);
         if (kh_dao.isExits(maKH)) {
             JOptionPane.showMessageDialog(this, "Mã khách hàng đã tồn tại!");
             return;
@@ -564,10 +565,23 @@ public class frmKhachHang extends JFrame implements ActionListener, MouseListene
         table.setRowSorter(sorter);
         if (!text.isEmpty()) {
             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-            if (sorter.getViewRowCount() == 0) {
+
+            if (table.getRowCount() == 0) {
                 JOptionPane.showMessageDialog(this, "Không tìm thấy kết quả nào!");
                 return;
             }
+            table.setRowSelectionInterval(0, 0);
+            int modelRow = sorter.convertRowIndexToModel(0);
+            txtMaKH.setText(tableModel.getValueAt(modelRow, 0).toString());
+            txtTenKH.setText(tableModel.getValueAt(modelRow, 1).toString());
+            txtDate.setText(tableModel.getValueAt(modelRow, 2).toString());
+            txtDiaChi.setText(tableModel.getValueAt(modelRow, 3).toString());
+            String gioiTinh = tableModel.getValueAt(modelRow, 4).toString();
+            if (gioiTinh.equals("Nam")) rbNam.setSelected(true);
+            else if (gioiTinh.equals("Nữ")) rbNu.setSelected(true);
+            else rbKhac.setSelected(true);
+            txtSoDT.setText(tableModel.getValueAt(modelRow, 5).toString());
+
             JOptionPane.showMessageDialog(this, "Đã tìm thấy kết quả!");
         } else {
             sorter.setRowFilter(null);

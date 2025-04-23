@@ -2,7 +2,6 @@ package dao;
 
 import connectSQL.ConnectSQL;
 import entity.KhachHang;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
