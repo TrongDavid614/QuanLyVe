@@ -9,11 +9,17 @@ public class Ghe {
         VIP
     }
 
+    public enum TrangThaiGhe {
+        CON_TRONG,
+        DA_DAT
+    }
+
     private int maGhe;
-    private String tenGhe;  // Định dạng: A1, B2...
+    private String tenGhe;  
     private LoaiGhe loaiGhe;
     private PhongChieu phongChieu;
     private List<ChiTietVe> chiTietVes;
+    private TrangThaiGhe trangThai;
     
     public Ghe() {
         this.chiTietVes = new ArrayList<>();
@@ -70,6 +76,14 @@ public class Ghe {
     
     public void setChiTietVes(List<ChiTietVe> chiTietVes) {
         this.chiTietVes = chiTietVes;
+    }
+
+    public TrangThaiGhe getTrangThai() {
+        return trangThai;
+    }
+    
+    public void setTrangThai(TrangThaiGhe trangThai) {
+        this.trangThai = trangThai;
     }
 
     @Override
