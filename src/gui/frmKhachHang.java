@@ -14,12 +14,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class frmKhachHang extends JFrame implements ActionListener , MouseListener {
+public class frmKhachHang extends JFrame implements ActionListener, MouseListener {
     private KhachHang_Dao kh_dao;
     private ConnectSQL connectSQL;
     private JMenuItem miTrangChu;
@@ -27,23 +26,23 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
     private JButton btnXoa;
     private JButton btnSua;
     private JButton btnXoaTrang;
-    private  JLabel lblMaKH;
-    private  JTextField txtMaKH;
-    private  JLabel lblTenKH;
-    private  JTextField txtTenKH;
-    private  JLabel lbldate;
-    private  JFormattedTextField txtDate;
-    private  JLabel lblDiaChi;
-    private  JTextField txtDiaChi;
-    private  JLabel lblGioiTinh;
-    private  JRadioButton rbNam;
-    private  JRadioButton rbNu;
-    private  JRadioButton rbKhac;
-    private  ButtonGroup genderGroup;
-    private  JLabel lblSoDT;
-    private  JTextField txtSoDT;
-    private  JTextField txtTimKiem;
-    private  JLabel lblTiemKiem;
+    private JLabel lblMaKH;
+    private JTextField txtMaKH;
+    private JLabel lblTenKH;
+    private JTextField txtTenKH;
+    private JLabel lbldate;
+    private JFormattedTextField txtDate;
+    private JLabel lblDiaChi;
+    private JTextField txtDiaChi;
+    private JLabel lblGioiTinh;
+    private JRadioButton rbNam;
+    private JRadioButton rbNu;
+    private JRadioButton rbKhac;
+    private ButtonGroup genderGroup;
+    private JLabel lblSoDT;
+    private JTextField txtSoDT;
+    private JTextField txtTimKiem;
+    private JLabel lblTiemKiem;
     private JButton btnThem;
     private JLabel title;
     private JLabel lblQuanLy;
@@ -54,18 +53,16 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
 
     public frmKhachHang() {
         kh_dao = new KhachHang_Dao();
-
         connectSQL.getInstance().connect();
         setTitle("Khách Hàng");
         setSize(1600, 830);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        //menu
+        // Menu
         JMenuBar menuBar = new JMenuBar();
         menuBar.setPreferredSize(new Dimension(1600, 50));
         menuBar.setBackground(new Color(0xE4E2D8));
-
 
         ImageIcon imgHeThong = new ImageIcon("src/img/heThong.png");
         ImageIcon imgDanhMuc = new ImageIcon("src/img/danhMuc.png");
@@ -103,7 +100,7 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
             } else if (item.equals("Thoát")) {
                 miThoat = menuItem;
                 menuItem.addActionListener(this);
-            } else if(item.equals("Trang chủ")){
+            } else if (item.equals("Trang chủ")) {
                 miTrangChu = menuItem;
                 menuItem.addActionListener(this);
             }
@@ -118,7 +115,7 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
             menuDanhMuc.add(menuItem);
         }
 
-        String[] xuLyItems = {"Vé", "Phòng chiếu", "Đồ ăn", "Đặt vé"};
+        String[] xuLyItems = {"Vé", "Phòng chiếu", "Đồ ăn"};
         for (String item : xuLyItems) {
             JMenuItem menuItem = createMenuItem(item);
             menuItem.setFont(new Font("Arial", Font.PLAIN, 18));
@@ -154,33 +151,26 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
         titlePanel.add(title, BorderLayout.CENTER);
         getContentPane().add(titlePanel, BorderLayout.NORTH);
 
-        JPanel pSouth = new JPanel(new BorderLayout());
-        pSouth.setPreferredSize(new Dimension(1600, 650));
-        pSouth.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JPanel pTop = new JPanel(new BorderLayout());
-        pTop.setPreferredSize(new Dimension(1600, 180));
-
         // Phần nhập liệu
         JPanel pLeft = new JPanel(new GridBagLayout());
-        pLeft.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         pLeft.setBorder(BorderFactory.createTitledBorder("Nhập thông tin khách hàng"));
+        pLeft.setPreferredSize(new Dimension(1120, 180));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
         lblMaKH = new JLabel("Mã khách hàng:");
-        txtMaKH = new JTextField(20);
+        txtMaKH = new JTextField(50);
         lblTenKH = new JLabel("Tên khách hàng:");
-        txtTenKH = new JTextField(15);
+        txtTenKH = new JTextField(50);
         lbldate = new JLabel("Ngày sinh:");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         txtDate = new JFormattedTextField(new DateFormatter(dateFormat));
-        txtDate.setColumns(15);
+        txtDate.setColumns(50);
         txtDate.setFont(new Font("Arial", Font.PLAIN, 16));
         txtDate.setToolTipText("Nhập ngày sinh theo định dạng dd/MM/yyyy");
         lblDiaChi = new JLabel("Địa chỉ:");
-        txtDiaChi = new JTextField(15);
+        txtDiaChi = new JTextField(50);
         lblGioiTinh = new JLabel("Giới tính:");
         genderGroup = new ButtonGroup();
         rbNam = new JRadioButton("Nam");
@@ -194,39 +184,78 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
         genderPanel.add(rbNu);
         genderPanel.add(rbKhac);
         lblSoDT = new JLabel("Số điện thoại:");
-        txtSoDT = new JTextField(15);
+        txtSoDT = new JTextField(50);
 
-        // Hàng 1: Mã KH và Tên KH
+        // Hàng 1: Mã KH
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
         pLeft.add(lblMaKH, gbc);
-        gbc.gridx = 1;
-        pLeft.add(txtMaKH, gbc);
-        gbc.gridx = 2;
-        pLeft.add(lblTenKH, gbc);
-        gbc.gridx = 3;
-        pLeft.add(txtTenKH, gbc);
 
-        // Hàng 2: Ngày sinh và Địa chỉ
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        pLeft.add(txtMaKH, gbc);
+
+        // Hàng 2: Tên KH
         gbc.gridx = 0;
         gbc.gridy = 1;
-        pLeft.add(lbldate, gbc);
-        gbc.gridx = 1;
-        pLeft.add(txtDate, gbc);
-        gbc.gridx = 2;
-        pLeft.add(lblDiaChi, gbc);
-        gbc.gridx = 3;
-        pLeft.add(txtDiaChi, gbc);
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        pLeft.add(lblTenKH, gbc);
 
-        // Hàng 3: Giới tính và Số ĐT
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        pLeft.add(txtTenKH, gbc);
+
+        // Hàng 3: Ngày sinh
         gbc.gridx = 0;
         gbc.gridy = 2;
-        pLeft.add(lblGioiTinh, gbc);
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        pLeft.add(lbldate, gbc);
+
         gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        pLeft.add(txtDate, gbc);
+
+        // Hàng 4: Địa chỉ
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        pLeft.add(lblDiaChi, gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        pLeft.add(txtDiaChi, gbc);
+
+        // Hàng 5: Giới tính
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        pLeft.add(lblGioiTinh, gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         pLeft.add(genderPanel, gbc);
-        gbc.gridx = 2;
+
+        // Hàng 6: Số ĐT
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
         pLeft.add(lblSoDT, gbc);
-        gbc.gridx = 3;
+
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         pLeft.add(txtSoDT, gbc);
 
         lblMaKH.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -241,9 +270,16 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
 
         // Phần thao tác
         JPanel pRight = new JPanel(new BorderLayout());
-        pRight.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        pRight.setPreferredSize(new Dimension(480, 180));
 
-        JPanel pButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 30, 0));
+        JPanel pButtons = new JPanel();
+        pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.Y_AXIS));
+        pButtons.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Hàng 1: "Thêm" và "Xóa"
+        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+
         btnThem = new JButton("Thêm");
         btnXoa = new JButton("Xóa");
         btnSua = new JButton("Sửa");
@@ -254,39 +290,66 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
         btnSua.setFont(new Font("Arial", Font.PLAIN, 16));
         btnXoaTrang.setFont(new Font("Arial", Font.PLAIN, 16));
 
-        btnThem.setPreferredSize(new Dimension(100, 40));
-        btnXoa.setPreferredSize(new Dimension(100, 40));
-        btnSua.setPreferredSize(new Dimension(100, 40));
-        btnXoaTrang.setPreferredSize(new Dimension(130, 40));
-        
-        pButtons.add(btnThem);
-        pButtons.add(btnXoa);
-        pButtons.add(btnSua);
-        pButtons.add(btnXoaTrang);
+        // Đảm bảo kích thước đồng đều cho các nút
+        btnThem.setPreferredSize(new Dimension(120, 40));
+        btnXoa.setPreferredSize(new Dimension(120, 40));
+        btnSua.setPreferredSize(new Dimension(120, 40));
+        btnXoaTrang.setPreferredSize(new Dimension(120, 40));
 
-        // Tìm kiếm
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        // Thêm màu cho các nút
+        btnThem.setBackground(new Color(34, 139, 34));
+        btnThem.setForeground(Color.WHITE);
+        btnXoa.setBackground(new Color(220, 20, 60));
+        btnXoa.setForeground(Color.WHITE);
+        btnSua.setBackground(new Color(255, 140, 0));
+        btnSua.setForeground(Color.WHITE);
+        btnXoaTrang.setBackground(new Color(128, 128, 128));
+        btnXoaTrang.setForeground(Color.WHITE);
+
+        //Hang 1
+        row1.add(btnThem);
+        row1.add(btnXoa);
+        //Hang 2
+        row2.add(btnSua);
+        row2.add(btnXoaTrang);
+        pButtons.add(row1);
+        pButtons.add(row2);
+        pRight.add(pButtons, BorderLayout.CENTER);
+
+        // Kết hợp pLeft và pRight trong pTop
+        JPanel pTop = new JPanel(new BorderLayout());
+        pTop.setPreferredSize(new Dimension(1600, 250));
+        JPanel pInputAndOps = new JPanel(new BorderLayout());
+        pInputAndOps.add(pLeft, BorderLayout.WEST);
+        pInputAndOps.add(pRight, BorderLayout.EAST);
+        pTop.add(pInputAndOps, BorderLayout.CENTER);
+
+        pRight.setBorder(BorderFactory.createTitledBorder("Chọn tác vụ"));
+
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         lblTiemKiem = new JLabel("Tìm kiếm:");
-        searchPanel.add(lblTiemKiem);
         txtTimKiem = new JTextField(40);
-        lblTiemKiem.setFont(new Font("Arial", Font.PLAIN, 16));
         btnTimKiem = new JButton("Tìm kiếm");
+
+        lblTiemKiem.setFont(new Font("Arial", Font.PLAIN, 16));
+        txtTimKiem.setFont(new Font("Arial", Font.PLAIN, 16));
         btnTimKiem.setFont(new Font("Arial", Font.PLAIN, 16));
         btnTimKiem.setPreferredSize(new Dimension(100, 40));
+
+        btnTimKiem.setBackground(new Color(30, 144, 255));
+        btnTimKiem.setForeground(Color.WHITE);
+
+        searchPanel.add(lblTiemKiem);
         searchPanel.add(txtTimKiem);
         searchPanel.add(btnTimKiem);
 
-        JPanel pRightContainer = new JPanel();
-        pRightContainer.setBorder(BorderFactory.createTitledBorder("Thao tác"));
-        pRightContainer.setLayout(new BoxLayout(pRightContainer, BoxLayout.Y_AXIS));
-        pRightContainer.add(pButtons);
-        pRightContainer.add(Box.createVerticalStrut(10));
-        pRightContainer.add(searchPanel);
+        JPanel pSouth = new JPanel(new BorderLayout());
+        pSouth.setPreferredSize(new Dimension(1600, 650));
+        pSouth.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        pRight.add(pRightContainer, BorderLayout.NORTH);
-
-        pTop.add(pLeft, BorderLayout.WEST);
-        pTop.add(pRight, BorderLayout.EAST);
+        JPanel pTopAndSearch = new JPanel(new BorderLayout());
+        pTopAndSearch.add(pTop, BorderLayout.NORTH);
+        pTopAndSearch.add(searchPanel, BorderLayout.CENTER);
 
         JPanel pBottom = new JPanel(new BorderLayout());
         String[] headers = {"Mã KH", "Tên KH", "Ngày sinh", "Địa chỉ", "Giới tính", "Số ĐT"};
@@ -310,7 +373,7 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
 
         pBottom.add(new JScrollPane(table), BorderLayout.CENTER);
 
-        pSouth.add(pTop, BorderLayout.NORTH);
+        pSouth.add(pTopAndSearch, BorderLayout.NORTH);
         pSouth.add(pBottom, BorderLayout.CENTER);
 
         getContentPane().add(pSouth, BorderLayout.CENTER);
@@ -328,10 +391,11 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
     private JMenuItem createMenuItem(String name) {
         return new JMenuItem(name);
     }
-    public void DocDuLieuDatabaseVaoTable(){
+
+    public void DocDuLieuDatabaseVaoTable() {
         KhachHang_Dao ds = new KhachHang_Dao();
         List<KhachHang> dskh = ds.getalltbkhachhang();
-        for(KhachHang kh : dskh){
+        for (KhachHang kh : dskh) {
             String[] row = {kh.getMaKhachHang(), kh.getTenKhachHang(), kh.getNgaySinh().toString(), kh.getDiaChi(), kh.getGioiTinh(), kh.getSoDienThoai()};
             tableModel.addRow(row);
         }
@@ -347,20 +411,21 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
             Thoat();
         } else if (o == btnThem) {
             ThemKH();
-        } else if(o == btnXoa){
+        } else if (o == btnXoa) {
             Xoa();
-        } else if(o == btnSua){
+        } else if (o == btnSua) {
             Sua();
-        }   else if(o == btnXoaTrang){
+        } else if (o == btnXoaTrang) {
             XoaTrang();
-        } else if(o == btnTimKiem){
+        } else if (o == btnTimKiem) {
             TiemKiem();
-        } else if(o == miTrangChu){
+        } else if (o == miTrangChu) {
             dispose();
             new frmTrangChu();
         }
     }
-    public void DangXuat(){
+
+    public void DangXuat() {
         int option = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc muốn đăng xuất?",
                 "Xác nhận đăng xuất",
@@ -376,7 +441,8 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
             }
         }
     }
-    public void Thoat(){
+
+    public void Thoat() {
         int option = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc muốn thoát?",
                 "Xác nhận thoát",
@@ -387,7 +453,7 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
         }
     }
 
-    public void ThemKH(){
+    public void ThemKH() {
         String maKH = txtMaKH.getText().trim();
         String tenKH = txtTenKH.getText().trim();
         String ngaySinh = txtDate.getText().trim();
@@ -404,33 +470,41 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
             return;
         }
         KhachHang kh = new KhachHang(maKH, tenKH, LocalDate.parse(ngaySinh, DateTimeFormatter.ofPattern("dd/MM/yyyy")), diaChi, gioiTinh, soDT);
-        if(kh_dao.isExits(maKH)){
+        if (kh_dao.isExits(maKH)) {
             JOptionPane.showMessageDialog(this, "Mã khách hàng đã tồn tại!");
             return;
         }
-        try{
+        try {
             kh_dao.createKH(kh);
             String[] rowdata = {kh.getMaKhachHang(), kh.getTenKhachHang(), kh.getNgaySinh().toString(), kh.getDiaChi(), kh.getGioiTinh(), kh.getSoDienThoai()};
             tableModel.addRow(rowdata);
             JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công!");
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi: Không thể thêm khách hàng!");
             e.printStackTrace();
         }
         XoaTrang();
     }
-    public void Xoa(){
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow >= 0) {
-            tableModel.removeRow(selectedRow);
-            JOptionPane.showMessageDialog(this, "Đã xóa khách hàng!");
-            XoaTrang();
+
+    public void Xoa() {
+        int row = table.getSelectedRow();
+        if (row >= 0) {
+            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa khách hàng này?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                String maKH = (String) tableModel.getValueAt(row, 0);
+                if (kh_dao.delete(maKH)) {
+                    tableModel.removeRow(row);
+                    JOptionPane.showMessageDialog(this, "Đã xóa khách hàng!");
+                    XoaTrang();
+                    return;
+                }
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng để xóa!");
         }
     }
-    public void Sua(){
+
+    public void Sua() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
             String maKH = txtMaKH.getText().trim();
@@ -469,7 +543,8 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
             JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng để sửa!");
         }
     }
-    public void XoaTrang (){
+
+    public void XoaTrang() {
         txtMaKH.setText("");
         txtTenKH.setText("");
         txtDate.setText("");
@@ -482,7 +557,8 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
         sorter.setRowFilter(null);
         txtMaKH.requestFocus();
     }
-    public void TiemKiem(){
+
+    public void TiemKiem() {
         String text = txtTimKiem.getText().trim().toLowerCase();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tableModel);
         table.setRowSorter(sorter);
@@ -498,6 +574,7 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
             JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin tìm kiếm!");
         }
     }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         int row = table.getSelectedRow();
@@ -515,23 +592,18 @@ public class frmKhachHang extends JFrame implements ActionListener , MouseListen
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
+    public void mousePressed(MouseEvent e) {}
 
     @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(MouseEvent e) {}
 
+    public static void main(String[] args) {
+        new frmKhachHang();
     }
-
 }

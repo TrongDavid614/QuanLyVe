@@ -66,4 +66,36 @@ public class KhachHang_Dao {
             throw new RuntimeException(e);
         }
     }
+    public boolean delete(String maKH){
+        Connection con = ConnectSQL.getInstance().getConnection();
+        PreparedStatement stmt = null;
+        int n = 0;
+        try{
+            String sql = "DELETE FROM KhachHang WHERE maKH = ?";
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, maKH);
+            n = stmt.executeUpdate();
+            return n > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        }
+        public boolean updateKH(KhachHang kh){
+            Connection con = ConnectSQL.getInstance().getConnection();
+            int n=0;
+            try {
+                String sql = "UPDATE KhachHang SET tenKH = ?, ngaySinh = ?, diaChi = ?, gioiTinh = ?, soDienThoai = ? WHERE maKH = ?";
+                PreparedStatement stmt = con.prepareStatement(sql);
+                stmt.setString(1, kh.getTenKhachHang());
+                stmt.setDate(2, Date.valueOf(kh.getNgaySinh()));
+                stmt.setString(3, kh.getDiaChi());
+                stmt.setString(4, kh.getGioiTinh());
+                stmt.setString(5, kh.getSoDienThoai());
+                stmt.setString(6, kh.getMaKhachHang());
+                n = stmt.executeUpdate();
+                return n > 0;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+    }
 }

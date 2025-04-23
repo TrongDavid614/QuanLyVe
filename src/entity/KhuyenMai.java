@@ -1,20 +1,19 @@
 package entity;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class KhuyenMai {
     private String maKhuyenMai;
     private String tenKhuyenMai;
     private double phanTramGiam;
-    private LocalDate ngayGioDat;
+    private LocalDate ngayBatDau;
     private LocalDate ngayKetThuc;
 
-    public KhuyenMai(String maKhuyenMai, String tenKhuyenMai, double phanTramGiam, LocalDate ngayGioDat, LocalDate ngayKetThuc) {
+    public KhuyenMai(String maKhuyenMai, String tenKhuyenMai, double phanTramGiam, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
         this.maKhuyenMai = maKhuyenMai;
         this.tenKhuyenMai = tenKhuyenMai;
         this.phanTramGiam = phanTramGiam;
-        this.ngayGioDat = LocalDate.parse(ngayGioDat.toString());
+        this.ngayBatDau = LocalDate.parse(ngayBatDau.toString());
         this.ngayKetThuc = LocalDate.parse(ngayKetThuc.toString());
     }
     public KhuyenMai(String maKhuyenMai) {
@@ -46,11 +45,11 @@ public class KhuyenMai {
     }
 
     public LocalDate getNgayGioDat() {
-        return ngayGioDat;
+        return ngayBatDau;
     }
 
     public void setNgayGioDat(LocalDate ngayGioDat) {
-        this.ngayGioDat = ngayGioDat;
+        this.ngayBatDau = ngayGioDat;
     }
 
     public LocalDate getNgayKetThuc() {
@@ -67,7 +66,7 @@ public class KhuyenMai {
                 "maKhuyenMai='" + maKhuyenMai + '\'' +
                 ", tenKhuyenMai='" + tenKhuyenMai + '\'' +
                 ", phanTramGiam=" + phanTramGiam +
-                ", ngayGioDat=" + ngayGioDat +
+                ", ngayBatDau=" + ngayBatDau +
                 ", ngayKetThuc=" + ngayKetThuc +
                 '}';
     }
