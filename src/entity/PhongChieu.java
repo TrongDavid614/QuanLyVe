@@ -14,18 +14,16 @@ public class PhongChieu {
     }
     
     public PhongChieu(String tenPhong, int soGhe) {
+        this();
         this.tenPhong = tenPhong;
         this.soGhe = soGhe;
-        this.danhSachGhe = new ArrayList<>();
     }
     
     public PhongChieu(int maPhong, String tenPhong, int soGhe) {
+        this(tenPhong, soGhe);
         this.maPhong = maPhong;
-        this.tenPhong = tenPhong;
-        this.soGhe = soGhe;
-        this.danhSachGhe = new ArrayList<>();
     }
-    
+  
     public int getMaPhong() {
         return maPhong;
     }
@@ -57,42 +55,13 @@ public class PhongChieu {
     public void setDanhSachGhe(List<Ghe> danhSachGhe) {
         this.danhSachGhe = danhSachGhe;
     }
-    
-    public void themGhe(Ghe ghe) {
-        if (this.danhSachGhe == null) {
-            this.danhSachGhe = new ArrayList<>();
-        }
-        danhSachGhe.add(ghe);
-        ghe.setPhongChieu(this);
-    }
-    
-    public void taoGheTuDong() {
-        int tongSoGhe = this.soGhe;
-        int soGheMotHang = 10; 
-        int soHang = (int) Math.ceil((double) tongSoGhe / soGheMotHang);
-        int phanTramGheVIP = 50; 
-        int soGheVIP = (tongSoGhe * phanTramGheVIP) / 100;
-        
-        char hangChu = 'A';
-        int gheDem = 0;
-    
-        for (int i = 0; i < soHang; i++) {
-            for (int j = 1; j <= soGheMotHang; j++) {
-                if (gheDem >= tongSoGhe) break;
-                
-                String tenGhe = String.valueOf(hangChu) + j;
-                String loaiGhe = (gheDem < soGheVIP) ? "VIP" : "Thường";
-    
-                Ghe ghe = new Ghe(tenGhe, loaiGhe, this);
-                themGhe(ghe);
-                gheDem++;
-            }
-            hangChu++;
-        }
-    }
-    
+
     @Override
     public String toString() {
-        return "PhongChieu [maPhong=" + maPhong + ", tenPhong=" + tenPhong + ", soGhe=" + soGhe + "]";
+        return "PhongChieu [" +
+               "maPhong=" + maPhong + 
+               ", tenPhong='" + tenPhong + "'" + 
+               ", soGhe=" + soGhe + 
+               "]";
     }
 }
