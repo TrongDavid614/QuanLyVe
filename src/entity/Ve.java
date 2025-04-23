@@ -16,7 +16,6 @@ public class Ve {
     private List<ChiTietVe> chiTietVes;
     private List<DoAn> doAns;
     private KhuyenMai khuyenMai;
-    private String trangThaiVe; // "CHO_THANH_TOAN", "DA_THANH_TOAN", "DA_HUY"
     private String phuongThucThanhToan;
     private Date ngayThanhToan;
     private String maGiaoDich;
@@ -25,7 +24,6 @@ public class Ve {
         this.ngayDat = new Date();
         this.chiTietVes = new ArrayList<>();
         this.doAns = new ArrayList<>();
-        this.trangThaiVe = "CHO_THANH_TOAN";
     }
 
     public Ve(KhachHang khachHang, Phim phim, PhongChieu phongChieu, Date gioChieu) {
@@ -37,7 +35,7 @@ public class Ve {
     }
 
     public Ve(int maVe, KhachHang khachHang, Phim phim, PhongChieu phongChieu, 
-             Date ngayDat, Date gioChieu, double tongTien, String trangThaiVe,
+             Date ngayDat, Date gioChieu, double tongTien,
              String phuongThucThanhToan, Date ngayThanhToan, String maGiaoDich) {
         this.maVe = maVe;
         this.khachHang = khachHang;
@@ -48,7 +46,6 @@ public class Ve {
         this.tongTien = tongTien;
         this.chiTietVes = new ArrayList<>();
         this.doAns = new ArrayList<>();
-        this.trangThaiVe = trangThaiVe;
         this.phuongThucThanhToan = phuongThucThanhToan;
         this.ngayThanhToan = ngayThanhToan;
         this.maGiaoDich = maGiaoDich;
@@ -84,9 +81,6 @@ public class Ve {
     public KhuyenMai getKhuyenMai() { return khuyenMai; }
     public void setKhuyenMai(KhuyenMai khuyenMai) { this.khuyenMai = khuyenMai; }
 
-    public String getTrangThaiVe() { return trangThaiVe; }
-    public void setTrangThaiVe(String trangThaiVe) { this.trangThaiVe = trangThaiVe; }
-
     public String getPhuongThucThanhToan() { return phuongThucThanhToan; }
     public void setPhuongThucThanhToan(String phuongThucThanhToan) { this.phuongThucThanhToan = phuongThucThanhToan; }
 
@@ -119,8 +113,8 @@ public class Ve {
                ", ngayDat=" + ngayDat +
                ", gioChieu=" + gioChieu +
                ", tongTien=" + tongTien +
-               ", trangThaiVe='" + trangThaiVe + '\'' +
                ", maGiaoDich='" + maGiaoDich + '\'' +
                ']';
     }
+}
 }
