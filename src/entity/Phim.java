@@ -4,17 +4,16 @@ public class Phim {
     private String maPhim;
     private String tenPhim;
     private String theLoai;
-    private String thoiLuong;
+    private int thoiLuong;
     private String daoDien;
     private int namSanXuat;
     private String quocGia;
     private String moTa;
     private String posterPath; // Đường dẫn đến file poster
 
-    public Phim() {
-    }
 
-    public Phim(String maPhim, String tenPhim, String theLoai, String thoiLuong, String daoDien, int namSanXuat, String quocGia, String moTa, String posterPath) {
+
+    public Phim(String maPhim, String tenPhim, String theLoai, int thoiLuong, String daoDien, int namSanXuat, String quocGia, String moTa, String posterPath) {
         this.maPhim = maPhim;
         this.tenPhim = tenPhim;
         this.theLoai = theLoai;
@@ -24,6 +23,9 @@ public class Phim {
         this.quocGia = quocGia;
         this.moTa = moTa;
         this.posterPath = posterPath;
+    }
+    public Phim(String maPhim) {
+        this.maPhim = maPhim;
     }
 
     public String getMaPhim() {
@@ -50,11 +52,11 @@ public class Phim {
         this.theLoai = theLoai;
     }
 
-    public String getThoiLuong() {
+    public int getThoiLuong() {
         return thoiLuong;
     }
 
-    public void setThoiLuong(String thoiLuong) {
+    public void setThoiLuong(int thoiLuong) {
         this.thoiLuong = thoiLuong;
     }
 

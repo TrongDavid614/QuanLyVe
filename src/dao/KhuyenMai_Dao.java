@@ -37,7 +37,7 @@ public class KhuyenMai_Dao {
         try{
             Connection con = connectSQL.ConnectSQL.getInstance().getConnection();
             String sql = "select count(*) from khuyenmai where maKM = ?";
-            java.sql.PreparedStatement stmt = con.prepareStatement(sql);
+            PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, makhuyenmai);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {

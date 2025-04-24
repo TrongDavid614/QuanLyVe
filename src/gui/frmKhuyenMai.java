@@ -50,7 +50,6 @@ public class frmKhuyenMai extends JFrame implements ActionListener, MouseListene
     public frmKhuyenMai() {
         km_dao = new KhuyenMai_Dao();
         connectSQL.getInstance().connect();
-        System.out.println("Kết nối thành công!");
         setTitle("Khuyến Mãi");
         setSize(1600, 830);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
