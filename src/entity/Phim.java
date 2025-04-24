@@ -4,21 +4,26 @@ public class Phim {
     private String maPhim;
     private String tenPhim;
     private String theLoai;
-    private String tomTat;
-    private int thoiLuong;
-    private NhaSanXuat nhaSanXuat;
+    private String thoiLuong;
+    private String daoDien;
+    private int namSanXuat;
+    private String quocGia;
+    private String moTa;
+    private String posterPath; // Đường dẫn đến file poster
 
-    public Phim(String maPhim, String tenPhim, String theLoai, String tomTat, int thoiLuong, NhaSanXuat nhaSanXuat) {
+    public Phim() {
+    }
+
+    public Phim(String maPhim, String tenPhim, String theLoai, String thoiLuong, String daoDien, int namSanXuat, String quocGia, String moTa, String posterPath) {
         this.maPhim = maPhim;
         this.tenPhim = tenPhim;
         this.theLoai = theLoai;
-        this.tomTat = tomTat;
         this.thoiLuong = thoiLuong;
-        this.nhaSanXuat = nhaSanXuat;
-    }
-
-    public Phim(String maPhim){
-        this.maPhim = maPhim;
+        this.daoDien = daoDien;
+        this.namSanXuat = namSanXuat;
+        this.quocGia = quocGia;
+        this.moTa = moTa;
+        this.posterPath = posterPath;
     }
 
     public String getMaPhim() {
@@ -45,28 +50,52 @@ public class Phim {
         this.theLoai = theLoai;
     }
 
-    public String getTomTat() {
-        return tomTat;
-    }
-
-    public void setTomTat(String tomTat) {
-        this.tomTat = tomTat;
-    }
-
-    public int getThoiLuong() {
+    public String getThoiLuong() {
         return thoiLuong;
     }
 
-    public void setThoiLuong(int thoiLuong) {
+    public void setThoiLuong(String thoiLuong) {
         this.thoiLuong = thoiLuong;
     }
 
-    public NhaSanXuat getNhaSanXuat() {
-        return nhaSanXuat;
+    public String getDaoDien() {
+        return daoDien;
     }
 
-    public void setNhaSanXuat(NhaSanXuat nhaSanXuat) {
-        this.nhaSanXuat = nhaSanXuat;
+    public void setDaoDien(String daoDien) {
+        this.daoDien = daoDien;
+    }
+
+    public int getNamSanXuat() {
+        return namSanXuat;
+    }
+
+    public void setNamSanXuat(int namSanXuat) {
+        this.namSanXuat = namSanXuat;
+    }
+
+    public String getQuocGia() {
+        return quocGia;
+    }
+
+    public void setQuocGia(String quocGia) {
+        this.quocGia = quocGia;
+    }
+
+    public String getMoTa() {
+        return moTa;
+    }
+
+    public void setMoTa(String moTa) {
+        this.moTa = moTa;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
 
     @Override
@@ -75,9 +104,12 @@ public class Phim {
                 "maPhim='" + maPhim + '\'' +
                 ", tenPhim='" + tenPhim + '\'' +
                 ", theLoai='" + theLoai + '\'' +
-                ", tomTat='" + tomTat + '\'' +
-                ", thoiLuong=" + thoiLuong +
-                ", nhaSanXuat=" + nhaSanXuat +
+                ", thoiLuong='" + thoiLuong + '\'' +
+                ", daoDien='" + daoDien + '\'' +
+                ", namSanXuat=" + namSanXuat +
+                ", quocGia='" + quocGia + '\'' +
+                ", moTa='" + moTa + '\'' +
+                ", posterPath='" + posterPath + '\'' +
                 '}';
     }
 }
