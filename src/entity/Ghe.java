@@ -4,31 +4,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Ghe {
+    public enum LoaiGhe {
+        THUONG,
+        VIP
+    }
+
+    public enum TrangThaiGhe {
+        CON_TRONG,
+        DA_DAT
+    }
+
     private int maGhe;
-    private String tenGhe; 
-    private String loaiGhe; 
+    private String tenGhe;  
+    private LoaiGhe loaiGhe;
     private PhongChieu phongChieu;
     private List<ChiTietVe> chiTietVes;
+    private TrangThaiGhe trangThai;
     
     public Ghe() {
         this.chiTietVes = new ArrayList<>();
+        this.loaiGhe = LoaiGhe.THUONG;  
     }
     
-    public Ghe(String tenGhe, String loaiGhe, PhongChieu phongChieu) {
+    public Ghe(String tenGhe, LoaiGhe loaiGhe, PhongChieu phongChieu) {
+        this();
         this.tenGhe = tenGhe;
         this.loaiGhe = loaiGhe;
         this.phongChieu = phongChieu;
-        this.chiTietVes = new ArrayList<>();
     }
-    
-    public Ghe(int maGhe, String tenGhe, String loaiGhe, PhongChieu phongChieu) {
+
+    public Ghe(int maGhe, String tenGhe, LoaiGhe loaiGhe, PhongChieu phongChieu) {
+        this(tenGhe, loaiGhe, phongChieu);
         this.maGhe = maGhe;
-        this.tenGhe = tenGhe;
-        this.loaiGhe = loaiGhe;
-        this.phongChieu = phongChieu;
-        this.chiTietVes = new ArrayList<>();
     }
-    
+
     public int getMaGhe() {
         return maGhe;
     }
@@ -45,11 +54,11 @@ public class Ghe {
         this.tenGhe = tenGhe;
     }
     
-    public String getLoaiGhe() {
+    public LoaiGhe getLoaiGhe() {
         return loaiGhe;
     }
     
-    public void setLoaiGhe(String loaiGhe) {
+    public void setLoaiGhe(LoaiGhe loaiGhe) {
         this.loaiGhe = loaiGhe;
     }
     
@@ -68,20 +77,22 @@ public class Ghe {
     public void setChiTietVes(List<ChiTietVe> chiTietVes) {
         this.chiTietVes = chiTietVes;
     }
-    
-    public boolean daCoNguoiDat() {
-        return chiTietVes != null && !chiTietVes.isEmpty();
+
+    public TrangThaiGhe getTrangThai() {
+        return trangThai;
     }
     
-    public void themChiTietVe(ChiTietVe chiTietVe) {
-        if (this.chiTietVes == null) {
-            this.chiTietVes = new ArrayList<>();
-        }
-        this.chiTietVes.add(chiTietVe);
+    public void setTrangThai(TrangThaiGhe trangThai) {
+        this.trangThai = trangThai;
     }
-    
+
     @Override
     public String toString() {
-        return "Ghe [maGhe=" + maGhe + ", tenGhe=" + tenGhe + ", loaiGhe=" + loaiGhe + "]";
+        return "Ghe [" +
+               "maGhe=" + maGhe + 
+               ", tenGhe=" + tenGhe + 
+               ", loaiGhe=" + loaiGhe + 
+               ", phongChieu=" + (phongChieu != null ? phongChieu.getTenPhong() : "null") +
+               "]";
     }
 }
