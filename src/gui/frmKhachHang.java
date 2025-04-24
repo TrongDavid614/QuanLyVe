@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class frmKhachHang extends JFrame implements ActionListener, MouseListener {
+    private JMenuItem miKhuyenMai;
     private KhachHang_Dao kh_dao;
     private ConnectSQL connectSQL;
     private JMenuItem miTrangChu;
@@ -112,6 +113,10 @@ public class frmKhachHang extends JFrame implements ActionListener, MouseListene
             JMenuItem menuItem = createMenuItem(item);
             menuItem.setFont(new Font("Arial", Font.PLAIN, 18));
             menuItem.addActionListener(this);
+            if(item.equals("Khuyến mại")){
+                miKhuyenMai = menuItem;
+                menuItem.addActionListener(this);
+            }
             menuDanhMuc.add(menuItem);
         }
 
@@ -422,6 +427,9 @@ public class frmKhachHang extends JFrame implements ActionListener, MouseListene
         } else if (o == miTrangChu) {
             dispose();
             new frmTrangChu();
+        } else if(o == miKhuyenMai){
+            dispose();
+            new frmKhuyenMai();
         }
     }
 
