@@ -1,17 +1,20 @@
 package gui;
 
+import connectSQL.ConnectSQL;
+import dao.DoAn_Dao;
+import entity.DoAn;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class frmDoAn extends JFrame implements ActionListener, MouseListener {
 
+    private ConnectSQL connectSQL;
     private final JLabel title;
+    private DoAn_Dao da_dao;
     private JMenuItem miTrangChu;
     private JMenuItem miKhuyenMai;
     private JMenuItem miKhachHang;
@@ -34,11 +37,14 @@ public class frmDoAn extends JFrame implements ActionListener, MouseListener {
     private JButton btnXoaTrang;
     private JButton btnDatDoAn;
 
-    private JPanel pDoAnGrid; // JPanel chứa lưới đồ ăn
-    private ArrayList<JPanel> foodPanels; // Danh sách các panel đồ ăn
-    private ImageIcon selectedImage; // Hình ảnh được chọn
+    private JPanel pDoAnGrid;
+    private ArrayList<JPanel> foodPanels;
+    private ImageIcon selectedImage;
+    private String selectedImagePath; // Biến để lưu đường dẫn hình ảnh
 
     public frmDoAn() {
+        da_dao = new DoAn_Dao();
+        connectSQL.getInstance().connect();
         setTitle("Đồ Ăn");
         setSize(1600, 830);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -326,30 +332,6 @@ public class frmDoAn extends JFrame implements ActionListener, MouseListener {
         pDoAnGrid.setLayout(new GridLayout(0, 3, 10, 10));
         pDoAnGrid.setBackground(Color.WHITE);
 
-        //demo dữ liệu test
-        String[] maDoAn = {"DA001", "DA002", "DA003", "DA004", "DA005", "DA006", "DA007", "DA008", "DA009"};
-        String[] tenDoAn = {"Bắp rang bơ", "Nước ngọt", "Snack", "Kem", "Hotdog", "Bánh mì", "Gà rán", "Khoai tây chiên", "Pizza"};
-        String[] donGia = {"30,000", "25,000", "20,000", "35,000", "40,000", "25,000", "50,000", "30,000", "60,000"};
-        String[] moTa = {
-                "Bắp rang bơ thơm ngon",
-                "Nước ngọt mát lạnh",
-                "Snack giòn tan",
-                "Kem mát lạnh",
-                "Hotdog nóng hổi",
-                "Bánh mì tươi ngon",
-                "Gà rán giòn rụm",
-                "Khoai tây chiên ngon",
-                "Pizza thơm lừng"
-        };
-
-        for (int i = 0; i < 9; i++) {
-            ImageIcon icon = new ImageIcon("src/img/doan" + (i + 1) + ".png");
-            Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            JPanel foodPanel = createFoodPanel(maDoAn[i], tenDoAn[i], donGia[i], moTa[i], new ImageIcon(scaledImage));
-            foodPanels.add(foodPanel);
-            pDoAnGrid.add(foodPanel);
-        }
-
         JScrollPane scrollPane = new JScrollPane(pDoAnGrid);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -370,7 +352,7 @@ public class frmDoAn extends JFrame implements ActionListener, MouseListener {
         btnDatDoAn.addActionListener(this);
         btnTimKiem.addActionListener(this);
         btnChonHinhAnh.addActionListener(this);
-
+        DocDuLieuTuDabataseVaoTable();
         setVisible(true);
     }
 
@@ -385,19 +367,18 @@ public class frmDoAn extends JFrame implements ActionListener, MouseListener {
         lblImage.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblMa = new JLabel("Mã: " + ma);
-        lblMa.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblMa.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         JLabel lblTen = new JLabel("Tên: " + ten);
-        lblTen.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblTen.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         JLabel lblGia = new JLabel("Giá: " + gia);
-        lblGia.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblGia.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         JLabel lblMoTa = new JLabel("Mô tả: " + moTa);
+
+        lblMa.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblTen.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblGia.setFont(new Font("Arial", Font.PLAIN, 14));
         lblMoTa.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        lblMa.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblTen.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblGia.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblMoTa.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         panel.add(Box.createVerticalStrut(5));
@@ -409,8 +390,62 @@ public class frmDoAn extends JFrame implements ActionListener, MouseListener {
         panel.add(lblMoTa);
         panel.add(Box.createVerticalStrut(5));
 
-        return panel;
+        // Thêm sự kiện khi click vào panel món ăn
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                txtMaDoAn.setText(ma);
+                txtTenDoAn.setText(ten);
+                txtDonGia.setText(gia);
+                txtMoTa.setText(moTa);
 
+                // Hiển thị hình ảnh đã chọn
+                File file = new File(icon.toString());
+                if (file.exists()) {
+                    ImageIcon img = new ImageIcon(icon.toString());
+                    Image scaled = img.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+                    lblHinhAnh.setIcon(new ImageIcon(scaled));
+                    selectedImagePath = icon.toString();
+                }
+            }
+        });
+
+        return panel;
+    }
+
+    public void DocDuLieuTuDabataseVaoTable() {
+        pDoAnGrid.removeAll(); // Xóa các panel cũ
+        foodPanels.clear(); // Xóa danh sách panel
+        List<DoAn> dsda = da_dao.getalltbDoAn();
+        for (DoAn da : dsda) {
+            String ma = da.getMaDoAn();
+            String ten = da.getTenDoAn();
+            String gia = String.valueOf(da.getGiaDoAn());
+            String moTa = da.getMoTa();
+            String hinhAnhPath = da.getHinhAnh();
+
+            // Tạo ImageIcon từ đường dẫn hình ảnh
+            ImageIcon icon;
+            File file = new File(hinhAnhPath != null ? hinhAnhPath : "src/img/default.png");
+            if (file.exists()) {
+                icon = new ImageIcon(hinhAnhPath);
+            } else {
+                icon = new ImageIcon("src/img/default.png");
+            }
+
+            // Điều chỉnh kích thước hình ảnh
+            Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(scaledImage);
+
+            // Tạo panel cho món ăn
+            JPanel foodPanel = createFoodPanel(ma, ten, gia, moTa, icon);
+            foodPanels.add(foodPanel);
+            pDoAnGrid.add(foodPanel);
+        }
+
+        // Cập nhật giao diện
+        pDoAnGrid.revalidate();
+        pDoAnGrid.repaint();
     }
 
     private JMenuItem createMenuItem(String name) {
@@ -422,6 +457,7 @@ public class frmDoAn extends JFrame implements ActionListener, MouseListener {
         item.addActionListener(action);
         return item;
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -460,16 +496,134 @@ public class frmDoAn extends JFrame implements ActionListener, MouseListener {
             dispose();
             new frmKhachHang();
         } else if (o == btnThem) {
-            String ma = txtMaDoAn.getText().trim();
+            ThemDoAn();
+        } else if (o == btnChonHinhAnh) {
+            JFileChooser fileChooser = new JFileChooser();
+            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                selectedImagePath = file.getAbsolutePath();
+                ImageIcon imageIcon = new ImageIcon(selectedImagePath);
+                Image scaledImage = imageIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+                selectedImage = new ImageIcon(imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+                lblHinhAnh.setIcon(new ImageIcon(scaledImage));
+            }
+        } else if (o == btnXoaTrang) {
+            XoaTrang();
+        } else if (o == btnXoa) {
+            XoaDoAn();
+        } else if (o == btnSua) {
+            SuaDoAn();
+        } else if (o == btnDatDoAn) {
+            DatDoAn();
+        }
+    }
+
+    public void ThemDoAn() {
+        String ma = txtMaDoAn.getText().trim();
+        String ten = txtTenDoAn.getText().trim();
+        String gia = txtDonGia.getText().trim();
+        String moTa = txtMoTa.getText().trim();
+        String hinhAnhPath = selectedImagePath != null ? selectedImagePath : "src/img/doan1.png";
+
+        if (ma.isEmpty() || ten.isEmpty() || gia.isEmpty() || moTa.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Kiểm tra mã đồ ăn đã tồn tại
+        if (da_dao.isExits(ma)) {
+            JOptionPane.showMessageDialog(this, "Mã đồ ăn đã tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Kiểm tra định dạng đơn giá
+        try {
+            Double.parseDouble(gia.replace(",", ""));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Đơn giá phải là số hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Hiển thị món ăn
+        ImageIcon icon = new ImageIcon(hinhAnhPath);
+        Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        JPanel foodPanel = createFoodPanel(ma, ten, gia, moTa, new ImageIcon(scaledImage));
+        foodPanels.add(foodPanel);
+        pDoAnGrid.add(foodPanel);
+
+        DoAn da = new DoAn(ma, ten, Double.parseDouble(gia.replace(",", "")), moTa, hinhAnhPath);
+
+        try {
+            if (da_dao.createDoAn(da)) {
+                JOptionPane.showMessageDialog(this, "Thêm đồ ăn thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                XoaTrang();
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm đồ ăn thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Cập nhật giao diện
+        pDoAnGrid.revalidate();
+        pDoAnGrid.repaint();
+    }
+
+    public void XoaTrang() {
+        txtMaDoAn.setText("");
+        txtTenDoAn.setText("");
+        txtDonGia.setText("");
+        txtMoTa.setText("");
+        lblHinhAnh.setIcon(null);
+        selectedImage = null;
+        selectedImagePath = null;
+        txtMaDoAn.requestFocus();
+    }
+
+    public void XoaDoAn() {
+        int selected = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa món ăn này?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+        if (selected == JOptionPane.YES_OPTION) {
+            String maDoAn = txtMaDoAn.getText().trim();
+
+            if (maDoAn.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn món ăn để xóa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+                try {
+                    boolean isDeleted = da_dao.deleteDoAn(maDoAn);
+                    SwingUtilities.invokeLater(() -> {
+                        if (isDeleted) {
+                            JOptionPane.showMessageDialog(null, "Xóa món ăn thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                            dispose();
+                            new frmDoAn();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Xóa món ăn thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+                    });
+                } catch (Exception ex) {
+                    SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    });
+                }
+        }
+    }
+
+    public void SuaDoAn() {
+        int selected = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn sửa món ăn này?", "Xác nhận sửa", JOptionPane.YES_NO_OPTION);
+        if (selected == JOptionPane.YES_OPTION) {
+            String maDoAn = txtMaDoAn.getText().trim();
             String ten = txtTenDoAn.getText().trim();
             String gia = txtDonGia.getText().trim();
             String moTa = txtMoTa.getText().trim();
+            String hinhAnhPath = selectedImagePath != null ? selectedImagePath : "src/img/doan1.png";
 
-            if (ma.isEmpty() || ten.isEmpty() || gia.isEmpty() || moTa.isEmpty()) {
+            if (maDoAn.isEmpty() || ten.isEmpty() || gia.isEmpty() || moTa.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            // Kiểm tra định dạng đơn giá
             try {
                 Double.parseDouble(gia.replace(",", ""));
             } catch (NumberFormatException ex) {
@@ -477,39 +631,36 @@ public class frmDoAn extends JFrame implements ActionListener, MouseListener {
                 return;
             }
 
-            ImageIcon icon = selectedImage != null ? selectedImage : new ImageIcon("src/img/doan1.png");
-            Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            JPanel foodPanel = createFoodPanel(ma, ten, gia, moTa, new ImageIcon(scaledImage));
-            foodPanels.add(foodPanel);
-            pDoAnGrid.add(foodPanel);
+            // Tạo đối tượng DoAn mới với thông tin đã chỉnh sửa
+            DoAn da = new DoAn(maDoAn, ten, Double.parseDouble(gia.replace(",", "")), moTa, hinhAnhPath);
 
-            pDoAnGrid.revalidate();
-            pDoAnGrid.repaint();
-
-            txtMaDoAn.setText("");
-            txtTenDoAn.setText("");
-            txtDonGia.setText("");
-            txtMoTa.setText("");
-            lblHinhAnh.setIcon(null);
-            selectedImage = null;
-        } else if (o == btnChonHinhAnh) {
-            JFileChooser fileChooser = new JFileChooser();
-            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                File file = fileChooser.getSelectedFile();
-                ImageIcon imageIcon = new ImageIcon(file.getPath());
-                Image scaledImage = imageIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-                selectedImage = new ImageIcon(imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-                lblHinhAnh.setIcon(new ImageIcon(scaledImage));
-            }
-        } else if (o == btnXoaTrang) {
-            // Xóa trắng các ô nhập liệu
-            txtMaDoAn.setText("");
-            txtTenDoAn.setText("");
-            txtDonGia.setText("");
-            txtMoTa.setText("");
-            lblHinhAnh.setIcon(null);
-            selectedImage = null;
+                try {
+                    boolean isUpdated = da_dao.updateDoAn(da);
+                    SwingUtilities.invokeLater(() -> {
+                        if (isUpdated) {
+                            JOptionPane.showMessageDialog(null, "Sửa món ăn thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                            dispose();
+                            new frmDoAn();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Sửa món ăn thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+                    });
+                } catch (Exception ex) {
+                    SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    });
+                }
         }
+    }
+
+    public void DatDoAn() {
+        String maDoAn = txtMaDoAn.getText().trim();
+        if (maDoAn.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn món ăn để đặt!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(null, "Đặt đồ ăn thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override

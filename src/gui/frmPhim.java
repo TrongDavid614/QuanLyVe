@@ -3,7 +3,6 @@ package gui;
 import dao.Phim_Dao;
 import entity.Phim;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import connectSQL.ConnectSQL;
 
 public class frmPhim extends JFrame implements ActionListener, MouseListener {
     private JLabel title;
@@ -35,14 +35,15 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
     private List<Phim> danhSachPhimTuDB;
 
     public frmPhim() {
+        ConnectSQL.getInstance().connect();
         setTitle("Quản lý phim");
-        setSize(1600, 800);
+        setSize(1600, 830);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         phimDAO = new Phim_Dao();
-        danhSachPhimTuDB = phimDAO.layTatCaPhim(); // Lấy dữ liệu phim từ database
+        danhSachPhimTuDB = phimDAO.layTatCaPhim();
 
         // Menu
         JMenuBar menuBar = new JMenuBar();
@@ -417,7 +418,7 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
                 icon = new ImageIcon("src/img/default_poster.jpg");
             }
             Image scaledImage = icon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH);
-            JPanel phimPanel = createPhimPanel(phim.getMaPhim(), phim.getTenPhim(), phim.getTheLoai(), phim.getThoiLuong(), phim.getDaoDien(), String.valueOf(phim.getNamSanXuat()), phim.getQuocGia(), phim.getMoTa(), new ImageIcon(scaledImage));
+            JPanel phimPanel = createPhimPanel(phim.getMaPhim(), phim.getTenPhim(), phim.getTheLoai(), String.valueOf(phim.getThoiLuong()), phim.getDaoDien(), String.valueOf(phim.getNamSanXuat()), phim.getQuocGia(), phim.getMoTa(), new ImageIcon(scaledImage));
             phimPanels.add(phimPanel);
             pPhimGrid.add(phimPanel);
         }
@@ -561,7 +562,6 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
     }
 
     private void timKiemPhimTheoTen() {
-		// TODO Auto-generated method stub
     	    String tenCanTim = txtTimKiem.getText().trim();
     	    if (tenCanTim.isEmpty()) {
     	        loadPhimLenGridView();
@@ -590,7 +590,7 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
     	                icon = new ImageIcon("src/img/default_poster.jpg");
     	            }
     	            Image scaledImage = icon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH);
-    	            JPanel phimPanel = createPhimPanel(phim.getMaPhim(), phim.getTenPhim(), phim.getTheLoai(), phim.getThoiLuong(), phim.getDaoDien(), String.valueOf(phim.getNamSanXuat()), phim.getQuocGia(), phim.getMoTa(), new ImageIcon(scaledImage));
+    	            JPanel phimPanel = createPhimPanel(phim.getMaPhim(), phim.getTenPhim(), phim.getTheLoai(), String.valueOf(phim.getThoiLuong()), phim.getDaoDien(), String.valueOf(phim.getNamSanXuat()), phim.getQuocGia(), phim.getMoTa(), new ImageIcon(scaledImage));
     	            phimPanels.add(phimPanel);
     	            pPhimGrid.add(phimPanel);
     	        }
@@ -604,20 +604,21 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         String ma = txtMaPhim.getText().trim();
         String ten = txtTenPhim.getText().trim();
         String theLoai = txtTheLoai.getText().trim();
-        String thoiLuong = txtThoiLuong.getText().trim();
+        String thoiLuongStr = txtThoiLuong.getText().trim();
         String daoDien = txtDaoDien.getText().trim();
         String namSXStr = txtNamSanXuat.getText().trim();
         String quocGia = txtQuocGia.getText().trim();
         String moTa = txtMoTa.getText().trim();
 
-        if (ma.isEmpty() || ten.isEmpty() || theLoai.isEmpty() || thoiLuong.isEmpty() || daoDien.isEmpty() || namSXStr.isEmpty() || quocGia.isEmpty() || moTa.isEmpty()) {
+        if (ma.isEmpty() || ten.isEmpty() || theLoai.isEmpty() || thoiLuongStr.isEmpty() || daoDien.isEmpty() || namSXStr.isEmpty() || quocGia.isEmpty() || moTa.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        int thoiLuong = Integer.parseInt(thoiLuongStr);
         try {
             int namSX = Integer.parseInt(namSXStr);
-            String posterPath = (selectedPoster != null) ? savePosterToLocal(selectedPoster, ma) : ""; // Lưu poster và lấy đường dẫn
+            String posterPath = (selectedPoster != null) ? savePosterToLocal(selectedPoster, ma) : "";
 
             Phim phimMoi = new Phim(ma, ten, theLoai, thoiLuong, daoDien, namSX, quocGia, moTa, posterPath);
             if (phimDAO.themPhim(phimMoi)) {
@@ -655,7 +656,7 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         String ma = txtMaPhim.getText().trim();
         String ten = txtTenPhim.getText().trim();
         String theLoai = txtTheLoai.getText().trim();
-        String thoiLuong = txtThoiLuong.getText().trim();
+        String thoiLuongStr = txtThoiLuong.getText().trim();
         String daoDien = txtDaoDien.getText().trim();
         String namSXStr = txtNamSanXuat.getText().trim();
         String quocGia = txtQuocGia.getText().trim();
@@ -665,10 +666,11 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập mã phim cần sửa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (ten.isEmpty() || theLoai.isEmpty() || thoiLuong.isEmpty() || daoDien.isEmpty() || namSXStr.isEmpty() || quocGia.isEmpty() || moTa.isEmpty()) {
+        if (ten.isEmpty() || theLoai.isEmpty() || thoiLuongStr.isEmpty() || daoDien.isEmpty() || namSXStr.isEmpty() || quocGia.isEmpty() || moTa.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        int thoiLuong = Integer.parseInt(thoiLuongStr);
 
         try {
             int namSX = Integer.parseInt(namSXStr);

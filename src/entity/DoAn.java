@@ -1,16 +1,20 @@
 package entity;
 
+import javax.swing.*;
+
 public class DoAn {
     private String maDoAn;
     private String tenDoAn;
     private double giaDoAn;
     private String moTa;
+    private String hinhAnh;
 
-    public DoAn(String maDoAn, String tenDoAn, double giaDoAn, String moTa) {
+    public DoAn(String maDoAn, String tenDoAn, double giaDoAn, String moTa , String hinhAnh) {
         this.maDoAn = maDoAn;
         this.tenDoAn = tenDoAn;
         this.giaDoAn = giaDoAn;
         this.moTa = moTa;
+        this.hinhAnh = hinhAnh;
     }
 
     public DoAn(String maDoAn) {
@@ -49,6 +53,14 @@ public class DoAn {
         this.moTa = moTa;
     }
 
+    public String getHinhAnh() {
+        return hinhAnh;
+    }
+
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
+    }
+
     @Override
     public String toString() {
         return "DoAn{" +
@@ -56,6 +68,7 @@ public class DoAn {
                 ", tenDoAn='" + tenDoAn + '\'' +
                 ", giaDoAn=" + giaDoAn +
                 ", moTa='" + moTa + '\'' +
+                ", hinhAnh='" + hinhAnh + '\'' +
                 '}';
     }
 }
