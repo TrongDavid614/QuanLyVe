@@ -14,7 +14,6 @@ public class Ve_Dao {
         con = ConnectSQL.getInstance().getConnection();
     }
 
-    // Thêm vé mới
     public boolean themVe(Ve ve) throws SQLException {
         String sql = "INSERT INTO Ve (maVe, maKH, maPhim, maPhong, ngayDat, gioChieu, tongTien) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = con.prepareStatement(sql)) {
