@@ -4,10 +4,7 @@ import dao.Phim_Dao;
 import entity.Phim;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +19,7 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
     private JTextField txtTimKiem;
     private JLabel lblPoster;
     private ImageIcon selectedPoster;
+    private String selectedPosterPath; // Biến để lưu đường dẫn ảnh, giống frmDoAn
     private JPanel pPhimGrid;
     private ArrayList<JPanel> phimPanels;
     private JMenuItem miDangXuat;
@@ -131,6 +129,7 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         menuBar.add(lblQuanLy);
 
         setJMenuBar(menuBar);
+
         // Phần tiêu đề
         JPanel titlePanel = new JPanel(new BorderLayout());
         title = new JLabel("Danh sách phim", SwingConstants.CENTER);
@@ -146,7 +145,7 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         mainPanel.setPreferredSize(new Dimension(1600, 700));
 
         JPanel pTop = new JPanel(new BorderLayout());
-        pTop.setPreferredSize(new Dimension(1800, 370));
+        pTop.setPreferredSize(new Dimension(1600, 370));
 
         JPanel pInput = new JPanel(new BorderLayout());
         pInput.setBorder(BorderFactory.createTitledBorder("Nhập thông tin phim"));
@@ -381,8 +380,6 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         pPhimGrid.setLayout(new GridLayout(0, 3, 10, 10));
         pPhimGrid.setBackground(Color.WHITE);
 
-        loadPhimLenGridView(); //
-
         JScrollPane scrollPane = new JScrollPane(pPhimGrid);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -403,6 +400,15 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         btnChonPoster.addActionListener(this);
         btnTimKiem.addActionListener(this);
 
+        // Đóng kết nối khi thoát
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                ConnectSQL.getInstance().disconnect();
+            }
+        });
+
+        loadPhimLenGridView();
         setVisible(true);
     }
 
@@ -410,15 +416,32 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         pPhimGrid.removeAll();
         phimPanels.clear();
         danhSachPhimTuDB = phimDAO.layTatCaPhim();
+        if (danhSachPhimTuDB == null || danhSachPhimTuDB.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có phim nào trong cơ sở dữ liệu!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         for (Phim phim : danhSachPhimTuDB) {
+            String posterPath = phim.getPosterPath() != null ? phim.getPosterPath() : "src/img/default_poster.jpg";
             ImageIcon icon;
-            if (phim.getPosterPath() != null && !phim.getPosterPath().isEmpty()) {
-                icon = new ImageIcon(phim.getPosterPath());
+            File file = new File(posterPath);
+            if (file.exists()) {
+                icon = new ImageIcon(posterPath);
             } else {
                 icon = new ImageIcon("src/img/default_poster.jpg");
             }
             Image scaledImage = icon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH);
-            JPanel phimPanel = createPhimPanel(phim.getMaPhim(), phim.getTenPhim(), phim.getTheLoai(), String.valueOf(phim.getThoiLuong()), phim.getDaoDien(), String.valueOf(phim.getNamSanXuat()), phim.getQuocGia(), phim.getMoTa(), new ImageIcon(scaledImage));
+            JPanel phimPanel = createPhimPanel(
+                    phim.getMaPhim() != null ? phim.getMaPhim() : "N/A",
+                    phim.getTenPhim() != null ? phim.getTenPhim() : "N/A",
+                    phim.getTheLoai() != null ? phim.getTheLoai() : "N/A",
+                    String.valueOf(phim.getThoiLuong()),
+                    phim.getDaoDien() != null ? phim.getDaoDien() : "N/A",
+                    String.valueOf(phim.getNamSanXuat()),
+                    phim.getQuocGia() != null ? phim.getQuocGia() : "N/A",
+                    phim.getMoTa() != null ? phim.getMoTa() : "",
+                    new ImageIcon(scaledImage),
+                    posterPath
+            );
             phimPanels.add(phimPanel);
             pPhimGrid.add(phimPanel);
         }
@@ -426,30 +449,30 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         pPhimGrid.repaint();
     }
 
-    private JPanel createPhimPanel(String ma, String ten, String theLoai, String thoiLuong, String daoDien, String namSX, String quocGia, String moTa, ImageIcon poster) {
+    private JPanel createPhimPanel(String ma, String ten, String theLoai, String thoiLuong, String daoDien, String namSX, String quocGia, String moTa, ImageIcon poster, String posterPath) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         panel.setBackground(Color.WHITE);
         panel.setPreferredSize(new Dimension(400, 300));
 
-        JLabel lblPoster = new JLabel(poster);
+        JLabel lblPoster = new JLabel(poster != null ? poster : new ImageIcon("src/img/default_poster.jpg"));
         lblPoster.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblMa = new JLabel("<html><b>Mã:</b> " + ma + "</html>");
+        JLabel lblMa = new JLabel("<html><b>Mã:</b> " + (ma != null ? ma : "N/A") + "</html>");
         lblMa.setFont(new Font("Arial", Font.PLAIN, 16));
         lblMa.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblTen = new JLabel("<html><b>Tên:</b> " + ten + "</html>");
+        JLabel lblTen = new JLabel("<html><b>Tên:</b> " + (ten != null ? ten : "N/A") + "</html>");
         lblTen.setFont(new Font("Arial", Font.PLAIN, 16));
         lblTen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblTheLoai = new JLabel("<html><b>Thể loại:</b> " + theLoai + "</html>");
+        JLabel lblTheLoai = new JLabel("<html><b>Thể loại:</b> " + (theLoai != null ? theLoai : "N/A") + "</html>");
         lblTheLoai.setFont(new Font("Arial", Font.PLAIN, 16));
         lblTheLoai.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        //lấy 50 ký tự đầu
         String tomTat = "Tóm tắt: ";
+        moTa = (moTa != null) ? moTa : "";
         if (moTa.length() > 50) {
             tomTat += moTa.substring(0, 50) + "...";
         } else {
@@ -472,15 +495,26 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         btnDatVe.setBackground(Color.RED);
         btnDatVe.setForeground(Color.WHITE);
 
-        //Sự kiện nút chi tiết và đặt vé
+        // Sự kiện nút chi tiết
+        String finalMoTa = moTa;
         btnChiTiet.addActionListener(e -> {
-            JOptionPane.showMessageDialog(panel, "Xem chi tiết phim: " + ten);
-
+            String chiTiet = String.format(
+                    "Mã phim: %s\nTên phim: %s\nThể loại: %s\nThời lượng: %s phút\nĐạo diễn: %s\nNăm sản xuất: %s\nQuốc gia: %s\nMô tả: %s",
+                    ma != null ? ma : "N/A",
+                    ten != null ? ten : "N/A",
+                    theLoai != null ? theLoai : "N/A",
+                    thoiLuong,
+                    daoDien != null ? daoDien : "N/A",
+                    namSX,
+                    quocGia != null ? quocGia : "N/A",
+                    finalMoTa
+            );
+            JOptionPane.showMessageDialog(panel, chiTiet, "Chi tiết phim", JOptionPane.INFORMATION_MESSAGE);
         });
 
+        // Sự kiện nút đặt vé
         btnDatVe.addActionListener(e -> {
-            JOptionPane.showMessageDialog(panel, "Đặt vé ngay cho phim: " + ten);
-
+            JOptionPane.showMessageDialog(panel, "Đặt vé ngay cho phim: " + (ten != null ? ten : "N/A"));
         });
 
         buttonPanel.add(btnChiTiet);
@@ -496,6 +530,32 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         panel.add(lblTomTat);
         panel.add(Box.createVerticalStrut(10));
         panel.add(buttonPanel);
+
+        // Thêm sự kiện click vào panel để điền thông tin lên form
+        String finalMoTa1 = moTa;
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                txtMaPhim.setText(ma);
+                txtTenPhim.setText(ten);
+                txtTheLoai.setText(theLoai);
+                txtThoiLuong.setText(thoiLuong);
+                txtDaoDien.setText(daoDien);
+                txtNamSanXuat.setText(namSX);
+                txtQuocGia.setText(quocGia);
+                txtMoTa.setText(finalMoTa1);
+                File file = new File(posterPath);
+                if (file.exists()) {
+                    ImageIcon img = new ImageIcon(posterPath);
+                    Image scaled = img.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH);
+                    lblPoster.setIcon(new ImageIcon(scaled));
+                    selectedPosterPath = posterPath;
+                } else {
+                    lblPoster.setIcon(null);
+                    selectedPosterPath = null;
+                }
+            }
+        });
 
         return panel;
     }
@@ -513,7 +573,7 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        if (o == ((JMenuItem) miDangXuat)) {
+        if (o == miDangXuat) {
             int option = JOptionPane.showConfirmDialog(this,
                     "Bạn có chắc muốn đăng xuất?",
                     "Xác nhận đăng xuất",
@@ -528,7 +588,7 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
                     JOptionPane.showMessageDialog(this, "Lỗi: Không thể mở frmLogin!");
                 }
             }
-        } else if (o == ((JMenuItem) miThoat)) {
+        } else if (o == miThoat) {
             int option = JOptionPane.showConfirmDialog(this,
                     "Bạn có chắc muốn thoát?",
                     "Xác nhận thoát",
@@ -537,13 +597,13 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
             if (option == JOptionPane.YES_OPTION) {
                 dispose();
             }
-        } else if (o == ((JMenuItem) miTrangChu)) {
+        } else if (o == miTrangChu) {
             dispose();
             new frmTrangChu();
-        } else if (o == ((JMenuItem) miKhuyenMai)) {
+        } else if (o == miKhuyenMai) {
             dispose();
             new frmKhuyenMai();
-        } else if (o == ((JMenuItem) miKhachHang)) {
+        } else if (o == miKhachHang) {
             dispose();
             new frmKhachHang();
         } else if (o == btnThem) {
@@ -557,50 +617,11 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         } else if (o == btnChonPoster) {
             chonPoster();
         } else if (o == btnTimKiem) {
-        	timKiemPhimTheoTen();
+            timKiemPhimTheoTen();
         }
     }
 
-    private void timKiemPhimTheoTen() {
-    	    String tenCanTim = txtTimKiem.getText().trim();
-    	    if (tenCanTim.isEmpty()) {
-    	        loadPhimLenGridView();
-    	        return;
-    	    }
-
-    	    pPhimGrid.removeAll();
-    	    phimPanels.clear();
-    	    List<Phim> ketQuaTimKiem = new ArrayList<>();
-
-    	    for (Phim phim : danhSachPhimTuDB) {
-    	        if (phim.getTenPhim().toLowerCase().contains(tenCanTim.toLowerCase())) {
-    	            ketQuaTimKiem.add(phim);
-    	        }
-    	    }
-
-    	    if (ketQuaTimKiem.isEmpty()) {
-    	        JOptionPane.showMessageDialog(this, "Không tìm thấy phim nào có tên chứa '" + tenCanTim + "'!");
-    	        loadPhimLenGridView();
-    	    } else {
-    	        for (Phim phim : ketQuaTimKiem) {
-    	            ImageIcon icon;
-    	            if (phim.getPosterPath() != null && !phim.getPosterPath().isEmpty()) {
-    	                icon = new ImageIcon(phim.getPosterPath());
-    	            } else {
-    	                icon = new ImageIcon("src/img/default_poster.jpg");
-    	            }
-    	            Image scaledImage = icon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH);
-    	            JPanel phimPanel = createPhimPanel(phim.getMaPhim(), phim.getTenPhim(), phim.getTheLoai(), String.valueOf(phim.getThoiLuong()), phim.getDaoDien(), String.valueOf(phim.getNamSanXuat()), phim.getQuocGia(), phim.getMoTa(), new ImageIcon(scaledImage));
-    	            phimPanels.add(phimPanel);
-    	            pPhimGrid.add(phimPanel);
-    	        }
-    	    }
-
-    	    pPhimGrid.revalidate();
-    	    pPhimGrid.repaint();
-    	}
-
-	private void themPhimVaoDatabase() {
+    private void themPhimVaoDatabase() {
         String ma = txtMaPhim.getText().trim();
         String ten = txtTenPhim.getText().trim();
         String theLoai = txtTheLoai.getText().trim();
@@ -609,27 +630,34 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         String namSXStr = txtNamSanXuat.getText().trim();
         String quocGia = txtQuocGia.getText().trim();
         String moTa = txtMoTa.getText().trim();
+        String posterPath = selectedPosterPath != null ? selectedPosterPath : "src/img/default_poster.jpg";
 
         if (ma.isEmpty() || ten.isEmpty() || theLoai.isEmpty() || thoiLuongStr.isEmpty() || daoDien.isEmpty() || namSXStr.isEmpty() || quocGia.isEmpty() || moTa.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        int thoiLuong = Integer.parseInt(thoiLuongStr);
         try {
+            int thoiLuong = Integer.parseInt(thoiLuongStr);
             int namSX = Integer.parseInt(namSXStr);
-            String posterPath = (selectedPoster != null) ? savePosterToLocal(selectedPoster, ma) : "";
+
+            if (phimDAO.isExist(ma)) {
+                JOptionPane.showMessageDialog(this, "Mã phim đã tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             Phim phimMoi = new Phim(ma, ten, theLoai, thoiLuong, daoDien, namSX, quocGia, moTa, posterPath);
             if (phimDAO.themPhim(phimMoi)) {
-                JOptionPane.showMessageDialog(this, "Thêm phim thành công!");
+                JOptionPane.showMessageDialog(this, "Thêm phim thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 loadPhimLenGridView();
                 xoaTrangForm();
             } else {
                 JOptionPane.showMessageDialog(this, "Thêm phim thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Năm sản xuất phải là số!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Thời lượng và năm sản xuất phải là số!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -642,12 +670,16 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
 
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa phim có mã: " + maPhimXoa + "?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            if (phimDAO.xoaPhim(maPhimXoa)) {
-                JOptionPane.showMessageDialog(this, "Xóa phim thành công!");
-                loadPhimLenGridView();
-                xoaTrangForm();
-            } else {
-                JOptionPane.showMessageDialog(this, "Xóa phim thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            try {
+                if (phimDAO.xoaPhim(maPhimXoa)) {
+                    JOptionPane.showMessageDialog(this, "Xóa phim thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                    loadPhimLenGridView();
+                    xoaTrangForm();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Xóa phim thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -661,6 +693,7 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         String namSXStr = txtNamSanXuat.getText().trim();
         String quocGia = txtQuocGia.getText().trim();
         String moTa = txtMoTa.getText().trim();
+        String posterPath = selectedPosterPath != null ? selectedPosterPath : "src/img/default_poster.jpg";
 
         if (ma.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập mã phim cần sửa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -670,33 +703,24 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        int thoiLuong = Integer.parseInt(thoiLuongStr);
 
         try {
+            int thoiLuong = Integer.parseInt(thoiLuongStr);
             int namSX = Integer.parseInt(namSXStr);
-            String posterPath = (selectedPoster != null) ? savePosterToLocal(selectedPoster, ma) : ""; // Lưu poster và lấy đường dẫn
 
             Phim phimCapNhat = new Phim(ma, ten, theLoai, thoiLuong, daoDien, namSX, quocGia, moTa, posterPath);
             if (phimDAO.capNhatPhim(phimCapNhat)) {
-                JOptionPane.showMessageDialog(this, "Cập nhật thông tin phim thành công!");
+                JOptionPane.showMessageDialog(this, "Cập nhật thông tin phim thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 loadPhimLenGridView();
                 xoaTrangForm();
             } else {
                 JOptionPane.showMessageDialog(this, "Cập nhật thông tin phim thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Năm sản xuất phải là số!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Thời lượng và năm sản xuất phải là số!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private String savePosterToLocal(ImageIcon imageIcon, String maPhim) {
-        String fileName = "poster_" + maPhim + ".jpg";
-        File outputDir = new File("posters");
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
-        File outputFile = new File(outputDir, fileName);
-        return outputFile.getPath();
     }
 
     private void xoaTrangForm() {
@@ -710,6 +734,8 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         txtMoTa.setText("");
         lblPoster.setIcon(null);
         selectedPoster = null;
+        selectedPosterPath = null;
+        txtMaPhim.requestFocus();
     }
 
     private void chonPoster() {
@@ -718,32 +744,80 @@ public class frmPhim extends JFrame implements ActionListener, MouseListener {
         fileChooser.setFileFilter(filter);
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            ImageIcon imageIcon = new ImageIcon(file.getPath());
+            selectedPosterPath = file.getAbsolutePath();
+            ImageIcon imageIcon = new ImageIcon(selectedPosterPath);
             Image scaledImage = imageIcon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH);
             selectedPoster = new ImageIcon(imageIcon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH));
             lblPoster.setIcon(new ImageIcon(scaledImage));
         }
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
+    private void timKiemPhimTheoTen() {
+        String tenCanTim = txtTimKiem.getText().trim();
+        if (tenCanTim.isEmpty()) {
+            loadPhimLenGridView();
+            return;
+        }
+
+        pPhimGrid.removeAll();
+        phimPanels.clear();
+        List<Phim> ketQuaTimKiem = new ArrayList<>();
+
+        for (Phim phim : danhSachPhimTuDB) {
+            if (phim.getTenPhim() != null && phim.getTenPhim().toLowerCase().contains(tenCanTim.toLowerCase())) {
+                ketQuaTimKiem.add(phim);
+            }
+        }
+
+        if (ketQuaTimKiem.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy phim nào có tên chứa '" + tenCanTim + "'!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            loadPhimLenGridView();
+        } else {
+            for (Phim phim : ketQuaTimKiem) {
+                String posterPath = phim.getPosterPath() != null ? phim.getPosterPath() : "src/img/default_poster.jpg";
+                ImageIcon icon;
+                File file = new File(posterPath);
+                if (file.exists()) {
+                    icon = new ImageIcon(posterPath);
+                } else {
+                    icon = new ImageIcon("src/img/default_poster.jpg");
+                }
+                Image scaledImage = icon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH);
+                JPanel phimPanel = createPhimPanel(
+                        phim.getMaPhim() != null ? phim.getMaPhim() : "N/A",
+                        phim.getTenPhim() != null ? phim.getTenPhim() : "N/A",
+                        phim.getTheLoai() != null ? phim.getTheLoai() : "N/A",
+                        String.valueOf(phim.getThoiLuong()),
+                        phim.getDaoDien() != null ? phim.getDaoDien() : "N/A",
+                        String.valueOf(phim.getNamSanXuat()),
+                        phim.getQuocGia() != null ? phim.getQuocGia() : "N/A",
+                        phim.getMoTa() != null ? phim.getMoTa() : "",
+                        new ImageIcon(scaledImage),
+                        posterPath // Truyền thêm posterPath
+                );
+                phimPanels.add(phimPanel);
+                pPhimGrid.add(phimPanel);
+            }
+        }
+
+        pPhimGrid.revalidate();
+        pPhimGrid.repaint();
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-    }
+    public void mouseClicked(MouseEvent e) {}
 
     @Override
-    public void mouseReleased(MouseEvent e) {
-    }
+    public void mousePressed(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseExited(MouseEvent e) {
-    }
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(frmPhim::new);

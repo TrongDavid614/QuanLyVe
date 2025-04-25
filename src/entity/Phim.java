@@ -9,7 +9,7 @@ public class Phim {
     private int namSanXuat;
     private String quocGia;
     private String moTa;
-    private String posterPath; // Đường dẫn đến file poster
+    private String posterPath;
 
 
 

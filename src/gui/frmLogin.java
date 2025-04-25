@@ -224,4 +224,8 @@ public class frmLogin extends JFrame implements ActionListener,MouseListener{
 
     }
 
+    public static void main(String[] args) {
+        new frmLogin();
+    }
+
 }

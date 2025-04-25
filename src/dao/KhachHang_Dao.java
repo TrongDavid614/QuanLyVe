@@ -2,6 +2,7 @@ package dao;
 
 import connectSQL.ConnectSQL;
 import entity.KhachHang;
+import javax.swing.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -96,5 +97,35 @@ public class KhachHang_Dao {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+
+
+    }
+    public KhachHang getKhachHangBySoDienThoai(String soDienThoai) {
+        String sql = "SELECT * FROM KhachHang WHERE soDienThoai = ?";
+        try (Connection conn = ConnectSQL.getInstance().getConnection()) {
+            if (conn == null) {
+                JOptionPane.showMessageDialog(null, "Không thể kết nối đến cơ sở dữ liệu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, soDienThoai);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    String maKH = rs.getString("maKH");
+                    String tenKH = rs.getString("tenKH");
+                    LocalDate ngaySinh = rs.getDate("ngaySinh").toLocalDate();
+                    String diaChi = rs.getString("diaChi");
+                    String gioiTinh = rs.getString("gioiTinh");
+                    KhachHang khachHang = new KhachHang(maKH, tenKH, ngaySinh, diaChi, gioiTinh, rs.getString("soDienThoai"));
+                    return khachHang;
+                } else {
+                    System.out.println("Không tìm thấy khách hàng với số điện thoại: " + soDienThoai);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi truy vấn cơ sở dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
     }
 }

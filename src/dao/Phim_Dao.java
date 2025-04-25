@@ -2,6 +2,8 @@ package dao;
 
 import connectSQL.ConnectSQL;
 import entity.Phim;
+
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Phim_Dao {
-    public ArrayList<Phim> dsp;
-    public Phim_Dao() {
-        dsp = new ArrayList<>();
-    }
-
     public boolean themPhim(Phim phim) {
-        String sql = "INSERT INTO phim (maPhim, tenPhim, theLoai, thoiLuong, daoDien, namSanXuat, quocGia, moTa, posterPath) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        if (phim == null || phim.getMaPhim() == null || phim.getTenPhim() == null) {
+            JOptionPane.showMessageDialog(null, "Dữ liệu phim không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        String sql = "INSERT INTO phim (maPhim, tenPhim, theLoai, thoiLuong, daoDien, namSanXuat, quocGia, moTa, poster) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = ConnectSQL.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, phim.getMaPhim());
@@ -30,72 +32,95 @@ public class Phim_Dao {
             preparedStatement.setString(9, phim.getPosterPath());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
-
+            if (rowsAffected > 0) {
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Thêm phim thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
         } catch (SQLException e) {
-            System.err.println("Lỗi thêm phim: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Lỗi thêm phim: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
 
-    public ArrayList<Phim> layTatCaPhim() {
-        try{
-            Connection connection = connectSQL.ConnectSQL.getConnection();
-            String sql = "SELECT * FROM phim";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String maPhim = resultSet.getString("maPhim");
-                String tenPhim = resultSet.getString("tenPhim");
-                String theLoai = resultSet.getString("theLoai");
-                int thoiLuong = resultSet.getInt("thoiLuong");
-                String daoDien = resultSet.getString("daoDien");
-                int namSanXuat = resultSet.getInt("namSanXuat");
-                String quocGia = resultSet.getString("quocGia");
-                String moTa = resultSet.getString("moTa");
-                String posterPath = resultSet.getString("posterPath");
-                Phim phim = new Phim(maPhim, tenPhim, theLoai, thoiLuong, daoDien, namSanXuat, quocGia, moTa, posterPath);
-                dsp.add(phim);
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Lỗi lấy tất cả phim: " + e.getMessage());
-            return null;
+    public boolean isExist(String maPhim) {
+        if (maPhim == null || maPhim.trim().isEmpty()) {
+            return false;
         }
-        return dsp;
+
+        String sql = "SELECT * FROM phim WHERE maPhim = ?";
+        try (Connection connection = ConnectSQL.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, maPhim);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Lỗi kiểm tra phim tồn tại: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
-    // Phương thức lấy thông tin một phim theo mã phim
-//    public Phim layPhimTheoMa(String maPhim) {
-//        Phim phim = null;
-//        String sql = "SELECT * FROM phim WHERE maPhim = ?";
-//        try (Connection connection = ConnectSQL.getConnection();
-//             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-//            preparedStatement.setString(1, maPhim);
-//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-//                if (resultSet.next()) {
-//                    phim = new Phim();
-//                    phim.setMaPhim(resultSet.getString("maPhim"));
-//                    phim.setTenPhim(resultSet.getString("tenPhim"));
-//                    phim.setTheLoai(resultSet.getString("theLoai"));
-//                    phim.setThoiLuong(resultSet.getInt("thoiLuong"));
-//                    phim.setDaoDien(resultSet.getString("daoDien"));
-//                    phim.setNamSanXuat(resultSet.getInt("namSanXuat"));
-//                    phim.setQuocGia(resultSet.getString("quocGia"));
-//                    phim.setMoTa(resultSet.getString("moTa"));
-//                    phim.setPosterPath(resultSet.getString("posterPath"));
-//                }
-//            }
-//        } catch (SQLException e) {
-//            System.err.println("Lỗi lấy phim theo mã: " + e.getMessage());
-//        }
-//        return phim;
-//    }
+    public List<Phim> layTatCaPhim() {
+        List<Phim> dsPhim = new ArrayList<>();
+        String sql = "SELECT DISTINCT maPhim, tenPhim, theLoai, thoiLuong, daoDien, namSanXuat, quocGia, moTa, poster FROM Phim";
+        try (Connection conn = ConnectSQL.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String maPhim = rs.getString("maPhim") != null ? rs.getString("maPhim") : "";
+                String tenPhim = rs.getString("tenPhim") != null ? rs.getString("tenPhim") : "";
+                String theLoai = rs.getString("theLoai") != null ? rs.getString("theLoai") : "";
+                int thoiLuong = rs.getInt("thoiLuong");
+                String daoDien = rs.getString("daoDien") != null ? rs.getString("daoDien") : "";
+                int namSanXuat = rs.getInt("namSanXuat");
+                String quocGia = rs.getString("quocGia") != null ? rs.getString("quocGia") : "";
+                String moTa = rs.getString("moTa") != null ? rs.getString("moTa") : "";
+                String poster = rs.getString("poster") != null ? rs.getString("poster") : "";
+                Phim phim = new Phim(maPhim, tenPhim, theLoai, thoiLuong, daoDien, namSanXuat, quocGia, moTa, poster);
+                dsPhim.add(phim);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi lấy danh sách phim: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+        return dsPhim;
+    }
 
-    // Phương thức cập nhật thông tin một phim
+    public Phim layPhimTheoMa(String maPhim) {
+        if (maPhim == null || maPhim.trim().isEmpty()) {
+            return null;
+        }
+
+        Phim phim = null;
+        String sql = "SELECT * FROM phim WHERE maPhim = ?";
+        try (Connection connection = ConnectSQL.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, maPhim);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String tenPhim = rs.getString("tenPhim") != null ? rs.getString("tenPhim") : "";
+                String theLoai = rs.getString("theLoai") != null ? rs.getString("theLoai") : "";
+                int thoiLuong = rs.getInt("thoiLuong");
+                String daoDien = rs.getString("daoDien") != null ? rs.getString("daoDien") : "";
+                int namSanXuat = rs.getInt("namSanXuat");
+                String quocGia = rs.getString("quocGia") != null ? rs.getString("quocGia") : "";
+                String moTa = rs.getString("moTa") != null ? rs.getString("moTa") : "";
+                String poster = rs.getString("poster") != null ? rs.getString("poster") : "";
+                phim = new Phim(maPhim, tenPhim, theLoai, thoiLuong, daoDien, namSanXuat, quocGia, moTa, poster);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Lỗi lấy phim theo mã: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+        return phim;
+    }
+
     public boolean capNhatPhim(Phim phim) {
-        String sql = "UPDATE phim SET tenPhim = ?, theLoai = ?, thoiLuong = ?, daoDien = ?, namSanXuat = ?, quocGia = ?, moTa = ?, posterPath = ? WHERE maPhim = ?";
+        if (phim == null || phim.getMaPhim() == null || phim.getTenPhim() == null) {
+            JOptionPane.showMessageDialog(null, "Dữ liệu phim không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        String sql = "UPDATE phim SET tenPhim = ?, theLoai = ?, thoiLuong = ?, daoDien = ?, namSanXuat = ?, quocGia = ?, moTa = ?, poster = ? WHERE maPhim = ?";
         try (Connection connection = ConnectSQL.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, phim.getTenPhim());
@@ -109,25 +134,37 @@ public class Phim_Dao {
             preparedStatement.setString(9, phim.getMaPhim());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
-
+            if (rowsAffected > 0) {
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Cập nhật phim thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
         } catch (SQLException e) {
-            System.err.println("Lỗi cập nhật phim: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Lỗi cập nhật phim: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
 
-    // Phương thức xóa một phim theo mã phim
     public boolean xoaPhim(String maPhim) {
+        if (maPhim == null || maPhim.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Mã phim không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
         String sql = "DELETE FROM phim WHERE maPhim = ?";
         try (Connection connection = ConnectSQL.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, maPhim);
             int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
-
+            if (rowsAffected > 0) {
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Xóa phim thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
         } catch (SQLException e) {
-            System.err.println("Lỗi xóa phim: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Lỗi xóa phim: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }

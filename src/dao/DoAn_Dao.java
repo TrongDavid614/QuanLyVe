@@ -1,37 +1,38 @@
 package dao;
 
+import connectSQL.ConnectSQL;
 import entity.DoAn;
 
 import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DoAn_Dao {
         public ArrayList<DoAn> dsda;
         public DoAn_Dao (){
             dsda = new ArrayList<>();
         }
-        public ArrayList<DoAn> getalltbDoAn() {
-            try{
-                Connection con = connectSQL.ConnectSQL.getConnection();
-                String sql = "SELECT * FROM doan";
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery(sql);
-                while (rs.next()) {
-                    String maDoAn = rs.getString("maDoAn");
-                    String tenDoAn = rs.getString("tenDoAn");
-                    double gia = rs.getDouble("gia");
-                    String mota = rs.getString("moTa");
-                    String hinhanh = rs.getString("hinhAnh");
-
-                    DoAn da = new DoAn(maDoAn, tenDoAn, gia, mota , hinhanh);
-                    dsda.add(da);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+    public List<DoAn> layTatCaDoAn() {
+        List<DoAn> dsDoAn = new ArrayList<>();
+        String sql = "SELECT DISTINCT maDoAn, tenDoAn, gia, moTa, hinhAnh FROM doan";
+        try (Connection conn = ConnectSQL.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String maDoAn = rs.getString("maDoAn") != null ? rs.getString("maDoAn") : "";
+                String tenDoAn = rs.getString("tenDoAn") != null ? rs.getString("tenDoAn") : "";
+                double gia = rs.getDouble("gia");
+                String moTa = rs.getString("moTa") != null ? rs.getString("moTa") : "";
+                String hinhAnh = rs.getString("hinhAnh") != null ? rs.getString("hinhAnh") : "";
+                DoAn doAn = new DoAn(maDoAn, tenDoAn, gia, moTa, hinhAnh);
+                dsDoAn.add(doAn);
             }
-            return dsda;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi lấy danh sách đồ ăn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
+        return dsDoAn;
+    }
         public boolean isExits(String maDoAn) {
             try{
                 Connection con = connectSQL.ConnectSQL.getInstance().getConnection();
