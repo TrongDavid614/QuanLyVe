@@ -48,17 +48,14 @@ public class ChiTietVe_Dao {
                     ChiTietVe chiTietVe = new ChiTietVe();
                     chiTietVe.setMaChiTietVe(rs.getInt("maChiTietVe"));
                     
-                    // Tạo đối tượng Ve
                     Ve ve = new Ve();
                     ve.setMaVe(maVe);
                     chiTietVe.setVe(ve);
                     
-                    // Tạo đối tượng PhongChieu
                     PhongChieu phongChieu = new PhongChieu();
                     phongChieu.setMaPhong(rs.getInt("maPhong"));
                     phongChieu.setTenPhong(rs.getString("tenPhong"));
                     
-                    // Tạo đối tượng Ghe
                     Ghe ghe = new Ghe();
                     ghe.setMaGhe(rs.getInt("maGhe"));
                     ghe.setTenGhe(rs.getString("tenGhe"));
@@ -87,17 +84,14 @@ public class ChiTietVe_Dao {
                 ChiTietVe chiTietVe = new ChiTietVe();
                 chiTietVe.setMaChiTietVe(rs.getInt("maChiTietVe"));
                 
-                // Tạo đối tượng Ve
                 Ve ve = new Ve();
                 ve.setMaVe(rs.getInt("maVe"));
                 chiTietVe.setVe(ve);
                 
-                // Tạo đối tượng PhongChieu
                 PhongChieu phongChieu = new PhongChieu();
                 phongChieu.setMaPhong(rs.getInt("maPhong"));
                 phongChieu.setTenPhong(rs.getString("tenPhong"));
                 
-                // Tạo đối tượng Ghe
                 Ghe ghe = new Ghe();
                 ghe.setMaGhe(rs.getInt("maGhe"));
                 ghe.setTenGhe(rs.getString("tenGhe"));
@@ -247,17 +241,14 @@ public class ChiTietVe_Dao {
                     ChiTietVe chiTietVe = new ChiTietVe();
                     chiTietVe.setMaChiTietVe(rs.getInt("maChiTietVe"));
                     
-                    // Tạo đối tượng Ve
                     Ve ve = new Ve();
                     ve.setMaVe(rs.getInt("maVe"));
                     chiTietVe.setVe(ve);
                     
-                    // Tạo đối tượng PhongChieu
                     PhongChieu phongChieu = new PhongChieu();
                     phongChieu.setMaPhong(rs.getInt("maPhong"));
                     phongChieu.setTenPhong(rs.getString("tenPhong"));
                     
-                    // Tạo đối tượng Ghe
                     Ghe ghe = new Ghe();
                     ghe.setMaGhe(rs.getInt("maGhe"));
                     ghe.setTenGhe(rs.getString("tenGhe"));
