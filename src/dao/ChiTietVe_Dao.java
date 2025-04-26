@@ -140,13 +140,15 @@ public class ChiTietVe_Dao {
         }
     }
 
-    public boolean kiemTraGheDaDat(int maGhe, int maLichChieu) throws SQLException {
+    public boolean kiemTraGheDaDat(int maGhe, int maPhong, java.util.Date gioChieu) throws SQLException {
         String sql = "SELECT ctv.* FROM ChiTietVe ctv " +
                      "JOIN Ve v ON ctv.maVe = v.maVe " +
-                     "WHERE ctv.maGhe = ? AND v.maLichChieu = ?";
+                     "JOIN PhongChieu p ON v.maPhong = p.maPhong " +
+                     "WHERE ctv.maGhe = ? AND p.maPhong = ? AND v.gioChieu = ?";
         try (PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setInt(1, maGhe);
-            stmt.setInt(2, maLichChieu);
+            stmt.setInt(2, maPhong);
+            stmt.setTimestamp(3, new java.sql.Timestamp(gioChieu.getTime()));
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next(); // Trả về true nếu ghế đã được đặt
             }
