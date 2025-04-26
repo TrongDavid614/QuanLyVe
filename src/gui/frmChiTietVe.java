@@ -44,7 +44,6 @@ public class frmChiTietVe extends JFrame {
         JPanel pnlMain = new JPanel(new BorderLayout(10, 10));
         pnlMain.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Panel thông tin vé
         JPanel pnlVeInfo = new JPanel(new GridLayout(5, 2, 10, 10));
         pnlVeInfo.setBorder(BorderFactory.createTitledBorder("Thông Tin Vé"));
 
@@ -70,7 +69,6 @@ public class frmChiTietVe extends JFrame {
         pnlVeInfo.add(new JLabel("Giờ Chiếu:"));
         pnlVeInfo.add(txtGioChieu);
 
-        // Panel thông tin chi tiết vé
         JPanel pnlChiTietVe = new JPanel(new BorderLayout());
         pnlChiTietVe.setBorder(BorderFactory.createTitledBorder("Chi Tiết Vé"));
 
@@ -113,13 +111,11 @@ public class frmChiTietVe extends JFrame {
         pnlButtons.add(btnTimKiem);
         pnlButtons.add(btnXoaTrang);
 
-        // Bảng chi tiết vé
         String[] columns = {"Mã Chi Tiết Vé", "Mã Vé", "Mã Ghế", "Tên Ghế", "Loại Ghế", "Phòng Chiếu", "Giá Vé"};
         model = new DefaultTableModel(columns, 0);
         tblChiTietVe = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(tblChiTietVe);
 
-        // Thêm các panel vào panel chính
         pnlChiTietVe.add(pnlForm, BorderLayout.NORTH);
         pnlChiTietVe.add(pnlButtons, BorderLayout.CENTER);
         pnlMain.add(pnlVeInfo, BorderLayout.NORTH);
@@ -128,7 +124,6 @@ public class frmChiTietVe extends JFrame {
 
         add(pnlMain);
 
-        // Load thông tin vé
         try {
             ve = ve_dao.getVeTheoMa(maVe);
             if (ve != null) {
@@ -222,24 +217,20 @@ public class frmChiTietVe extends JFrame {
                 return;
             }
 
-            // Kiểm tra ghế tồn tại
             Ghe ghe = ghe_dao.getGheTheoMa(maGhe);
             if (ghe == null) {
                 JOptionPane.showMessageDialog(this, "Mã ghế không tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Kiểm tra ghế đã được đặt
             if (chiTietVe_dao.kiemTraGheDaDat(maGhe, ve.getPhongChieu().getMaPhong(), ve.getGioChieu())) {
                 JOptionPane.showMessageDialog(this, "Ghế này đã được đặt cho phòng và giờ chiếu này",
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Tạo đối tượng chi tiết vé
             ChiTietVe chiTietVe = new ChiTietVe(ve, ghe, giaVe);
 
-            // Thêm vào CSDL
             boolean result = chiTietVe_dao.themChiTietVe(chiTietVe);
             if (result) {
                 JOptionPane.showMessageDialog(this, "Thêm chi tiết vé thành công",
@@ -308,21 +299,18 @@ public class frmChiTietVe extends JFrame {
             int maGhe = Integer.parseInt(txtMaGhe.getText().trim());
             double giaVe = Double.parseDouble(txtGiaVe.getText().trim());
 
-            // Kiểm tra vé tồn tại
             ve = ve_dao.getVeTheoMa(maVe);
             if (ve == null) {
                 JOptionPane.showMessageDialog(this, "Mã vé không tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Kiểm tra ghế tồn tại
             Ghe ghe = ghe_dao.getGheTheoMa(maGhe);
             if (ghe == null) {
                 JOptionPane.showMessageDialog(this, "Mã ghế không tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Kiểm tra ghế đã được đặt
             ChiTietVe chiTietVeHienTai = chiTietVe_dao.getChiTietVeTheoMa(maChiTietVe);
             if (chiTietVeHienTai != null && chiTietVeHienTai.getGhe().getMaGhe() != maGhe) {
                 if (chiTietVe_dao.kiemTraGheDaDat(maGhe, ve.getPhongChieu().getMaPhong(), ve.getGioChieu())) {
@@ -332,7 +320,6 @@ public class frmChiTietVe extends JFrame {
                 }
             }
 
-            // Tạo đối tượng chi tiết vé
             ChiTietVe chiTietVe = new ChiTietVe(maChiTietVe, ve, ghe, giaVe);
 
             // Cập nhật vào CSDL
