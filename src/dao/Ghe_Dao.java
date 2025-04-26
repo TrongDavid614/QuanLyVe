@@ -93,4 +93,39 @@ public class Ghe_Dao {
             return false;
         }
     }
+
+    public Ghe getGheTheoMa(int maGhe) {
+        String sql = "SELECT * FROM Ghe WHERE maGhe = ?";
+        try (Connection con = ConnectSQL.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+    
+            stmt.setInt(1, maGhe);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String tenGhe = rs.getString("tenGhe");
+                    String loaiGheStr = rs.getString("loaiGhe");
+                    int maPhong = rs.getInt("maPhong");
+                    String trangThaiStr = rs.getString("trangThai");
+    
+                    LoaiGhe loaiGhe = LoaiGhe.valueOf(loaiGheStr.toUpperCase());
+                    TrangThaiGhe trangThai = TrangThaiGhe.valueOf(trangThaiStr.toUpperCase());
+                    PhongChieu phong = new PhongChieu();
+                    phong.setMaPhong(maPhong);
+    
+                    PhongChieu_Dao phongChieu_dao = new PhongChieu_Dao();
+                    PhongChieu phongFull = phongChieu_dao.timPhongChieuTheoMa(maPhong);
+                    if (phongFull != null) {
+                        phong.setTenPhong(phongFull.getTenPhong());
+                    }
+    
+                    Ghe ghe = new Ghe(maGhe, tenGhe, loaiGhe, phong);
+                    ghe.setTrangThai(trangThai);
+                    return ghe;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
